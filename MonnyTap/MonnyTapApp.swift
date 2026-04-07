@@ -12,7 +12,7 @@ import SwiftData
 struct MonnyTapApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            Transaction.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -25,7 +25,7 @@ struct MonnyTapApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            OverviewView()
         }
         .modelContainer(sharedModelContainer)
     }
