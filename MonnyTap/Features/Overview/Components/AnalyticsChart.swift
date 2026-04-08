@@ -35,6 +35,10 @@ struct DonutChartView: View {
                 if data.isEmpty {
                     Circle()
                         .stroke(Color(.systemGray5), lineWidth: lineWidth)
+                    Text("No Data")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(.secondary)
+
                 } else {
                     ForEach(data) { point in
                         Circle()
