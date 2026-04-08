@@ -72,4 +72,4 @@ enum Category: String, CaseIterable, Identifiable, Codable {
      }
       */
 }
->>>>>>> master
+

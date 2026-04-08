@@ -7,32 +7,20 @@
 
 import SwiftUI
 
-struct ExpenseCategory: Identifiable {
-    let id = UUID()
-    let name: String
-    let iconName: String // SF Symbols or Custom
-    let color: Color
-}
-
 struct ModalCategoryExpenseView: View {
-    // This will eventually be moved to a @StateObject ViewModel
-    let categories: [ExpenseCategory] = [
-        ExpenseCategory(name: "FnB", iconName: "fork.knife", color: .yellow),
-        ExpenseCategory(name: "Investment", iconName: "house.fill", color: .orange),
-        ExpenseCategory(name: "Education", iconName: "graduationcap.fill", color: .blue),
-        ExpenseCategory(name: "Shopping", iconName: "bag.fill", color: .pink),
-        ExpenseCategory(name: "Entertainment", iconName: "gamecontroller.fill", color: .purple),
-        ExpenseCategory(name: "Health", iconName: "heart.fill", color: .red),
-        ExpenseCategory(name: "Travels", iconName: "figure.walk", color: .brown),
-        ExpenseCategory(name: "Transportation", iconName: "car.fill", color: .cyan),
-        ExpenseCategory(name: "Other", iconName: "circle.fill", color: .gray)
-    ]
-    
-    @State private var selectedCategoryId: UUID? = nil
-    @Environment(\.dismiss) var dismiss
+    // Selected category passed from parent (e.g., a transaction form)
+    @Binding var selectedCategory: Category?
+    // Optional callback when user taps Save
+    var onSave: ((Category?) -> Void)?
+
+    // Use real categories from the enum
+    private let categories: [Category] = Category.allCases
+
+    @State private var tempSelection: Category?
+    @Environment(\.dismiss) private var dismiss
 
     // Define the 3-column grid layout
-    let columns = [
+    private let columns = [
         GridItem(.flexible()),
         GridItem(.flexible()),
         GridItem(.flexible())
@@ -48,15 +36,18 @@ struct ModalCategoryExpenseView: View {
                     ForEach(categories) { category in
                         CategoryCell(
                             category: category,
-                            isSelected: selectedCategoryId == category.id
+                            isSelected: tempSelection == category
                         )
                         .onTapGesture {
-                            selectedCategoryId = category.id
+                            tempSelection = category
                         }
                     }
                 }
                 .padding()
             }
+        }
+        .onAppear {
+            tempSelection = selectedCategory
         }
     }
 
@@ -69,15 +60,20 @@ struct ModalCategoryExpenseView: View {
                     .background(Color(.systemGray6))
                     .clipShape(Circle())
             }
-            
+
             Spacer()
-            
+
             Text("Choose Category")
                 .font(.headline)
-            
+
             Spacer()
-            
-            Button(action: { /* Save Logic */ }) {
+
+            Button(action: {
+                let newValue = tempSelection ?? selectedCategory
+                selectedCategory = newValue
+                onSave?(newValue)
+                dismiss()
+            }) {
                 Image(systemName: "checkmark")
                     .font(.headline)
                     .foregroundColor(.white)
@@ -91,22 +87,22 @@ struct ModalCategoryExpenseView: View {
 }
 
 struct CategoryCell: View {
-    let category: ExpenseCategory
+    let category: Category
     let isSelected: Bool
 
     var body: some View {
         VStack(spacing: 12) {
             ZStack {
                 Circle()
-                    .fill(category.color.opacity(0.6))
+                    .fill(color(for: category).opacity(0.6))
                     .frame(width: 80, height: 80)
-                
-                Image(systemName: category.iconName)
+
+                Image(systemName: category.icon)
                     .font(.system(size: 30, weight: .bold))
                     .foregroundColor(.black.opacity(0.7))
             }
-            
-            Text(category.name)
+
+            Text(category.rawValue)
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(.primary)
         }
@@ -114,14 +110,29 @@ struct CategoryCell: View {
         .padding(.vertical, 16)
         .background(isSelected ? Color.blue.opacity(0.1) : Color(.systemGray6).opacity(0.3))
         .cornerRadius(20)
-        // Add a subtle border if selected
         .overlay(
             RoundedRectangle(cornerRadius: 20)
                 .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 2)
         )
     }
+
+    // Temporary color mapping until assets are finalized, matching Category comments
+    private func color(for category: Category) -> Color {
+        switch category {
+        case .fnb: return .orange
+        case .investment: return .blue
+        case .education: return .pink
+        case .shopping: return .red
+        case .entertainment: return .purple
+        case .health: return .brown
+        case .travels: return .yellow
+        case .transportation: return .green
+        case .other: return .gray
+        }
+    }
 }
 
 #Preview {
-    ModalCategoryExpenseView()
+    @Previewable @State var selected: Category?
+    return ModalCategoryExpenseView(selectedCategory: $selected) { _ in }
 }
