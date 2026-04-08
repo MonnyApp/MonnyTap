@@ -37,39 +37,33 @@ enum Category: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    // Belum fix, nunggu assets warna lebih lanjut
-    /*
+
       var color: Color {
          switch self {
-         case .fnb:          return .orange
-         case .investment:     return .blue
-         case .education:      return .pink
-         case .shopping:        return .red
-         case .entertainment:     return .purple
-         case .health:       return .brown
-         case .travels:         return .yellow
-         case .transportation: return .green
-         case .other:         return .gray
+         case .fnb:          return Color("yellowmonny")
+         case .investment:     return Color("orangemonny")
+         case .education:      return Color("bluemonny")
+         case .shopping:        return Color("pinkmonny")
+         case .entertainment:     return Color("purplemonny")
+         case .health:       return Color("redmonny")
+         case .travels:         return Color("Chocomonny")
+         case .transportation: return Color("toscamonny")
+         case .other:         return Color("greymonny")
          }
      }
-      */
-
-    // Belum fix, nunggu assets warna lebih lanjut
-    /*
+      
      var iconColor: Color {
         switch self {
-        case .fnb:          return .orange
-        case .investment:     return .blue
-        case .education:      return .pink
-        case .shopping:        return .red
-        case .entertainment:     return .purple
-        case .health:       return .brown
-        case .travels:         return .yellow
-        case .transportation: return .green
-        case .other:         return .gray
+        case .fnb:          return Color("yellowicon")
+        case .investment:     return Color("orangeicon")
+        case .education:      return Color("blueicon")
+        case .shopping:        return Color("pinkicon")
+        case .entertainment:     return Color("purpleicon")
+        case .health:       return Color("redicon")
+        case .travels:         return Color("chocoicon")
+        case .transportation: return Color("toscaicon")
+        case .other:         return Color("greyicon")
         }
     }
-     }
-      */
 }
 

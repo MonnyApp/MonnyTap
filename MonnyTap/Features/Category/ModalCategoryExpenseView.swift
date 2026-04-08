@@ -94,12 +94,12 @@ struct CategoryCell: View {
         VStack(spacing: 12) {
             ZStack {
                 Circle()
-                    .fill(color(for: category).opacity(0.6))
+                    .fill(category.color.opacity(0.6))
                     .frame(width: 80, height: 80)
 
                 Image(systemName: category.icon)
                     .font(.system(size: 30, weight: .bold))
-                    .foregroundColor(.black.opacity(0.7))
+                    .foregroundColor(category.iconColor)
             }
 
             Text(category.rawValue)
@@ -114,21 +114,6 @@ struct CategoryCell: View {
             RoundedRectangle(cornerRadius: 20)
                 .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 2)
         )
-    }
-
-    // Temporary color mapping until assets are finalized, matching Category comments
-    private func color(for category: Category) -> Color {
-        switch category {
-        case .fnb: return .orange
-        case .investment: return .blue
-        case .education: return .pink
-        case .shopping: return .red
-        case .entertainment: return .purple
-        case .health: return .brown
-        case .travels: return .yellow
-        case .transportation: return .green
-        case .other: return .gray
-        }
     }
 }
 
