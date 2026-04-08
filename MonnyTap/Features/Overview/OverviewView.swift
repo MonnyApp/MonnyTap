@@ -278,7 +278,6 @@ private struct AddTransactionFAB: View {
 // MARK: - Preview
 
 #Preview {
-    NavigationStack {
-        OverviewView()
-    }
+    OverviewView()
+        .modelContainer(for: Transaction.self, inMemory: true)
 }
