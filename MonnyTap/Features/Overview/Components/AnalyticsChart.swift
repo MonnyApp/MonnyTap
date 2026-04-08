@@ -51,7 +51,7 @@ struct DonutChartView: View {
     let data: [ChartDataPoint]
 
     private let gapSize: Double = 0.008
-    private let lineWidth: CGFloat = 38
+    private let lineWidth: CGFloat = 34
 
     var body: some View {
         GeometryReader { geo in
@@ -74,7 +74,7 @@ struct DonutChartView: View {
                     DonutLabel(
                         point: point,
                         center: center,
-                        radius: radius + lineWidth / 2 + 20
+                        radius: radius + lineWidth / 2 + 30
                     )
                 }
             }
@@ -102,7 +102,7 @@ struct DonutLabel: View {
 
     var body: some View {
         if point.percentage >= 0.04 {
-            VStack(spacing: 2) {
+            HStack(spacing: 2) {
                 Image(systemName: point.category.icon)
                     .font(.system(size: 10, weight: .medium))
                     .foregroundStyle(.secondary)
