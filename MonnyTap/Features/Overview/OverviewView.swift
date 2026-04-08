@@ -13,15 +13,15 @@ import Charts
 private extension Category {
     var tempColor: Color {
         switch self {
-        case .fnb:            return Color("#F5C842")
-        case .investment:     return Color("#60C8B0")
-        case .education:      return Color("#A8C8F0")
-        case .shopping:       return Color("#C8956A")
-        case .entertainment:  return Color("#C8A0E0")
-        case .health:         return Color("#F08080")
-        case .travels:        return Color("#78D0C0")
-        case .transportation: return Color("#FF8C55")
-        case .other:          return Color("#A0A0A8")
+        case .fnb:            return Color("yellowmonny")
+        case .investment:     return Color("orangemonny")
+        case .education:      return Color("bluemonny")
+        case .shopping:       return Color("pinkmonny")
+        case .entertainment:  return Color("purplemonny")
+        case .health:         return Color("redmonny")
+        case .travels:        return Color("Chocomonny")
+        case .transportation: return Color("toscamonny")
+        case .other:          return Color("greymonny")
         }
     }
 }
@@ -53,9 +53,6 @@ struct OverviewView: View {
         }
         .navigationTitle("Overview")
         .navigationBarTitleDisplayMode(.large)
-        .toolbarBackground(Color("#0D7A6B"), for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarColorScheme(.dark, for: .navigationBar)
         .sheet(isPresented: $showAddSheet) {
             Text("Form tambah transaksi — coming soon")
                 .font(.title3)
@@ -84,7 +81,7 @@ private struct BalanceCardSection: View {
                     .font(.subheadline)
             }
 
-            Text("Rp.  \(vm.formatRupiah(vm.balance))")
+            Text("\(vm.formatRupiah(vm.balance))")
                 .font(.title2)
                 .fontWeight(.bold)
 
