@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 import SwiftData
 
 @Model
@@ -23,7 +24,8 @@ final class Transaction {
         title: String,
         amount: Int,
         date: Date = .now,
-        category: Category?     ) {
+        category: Category?
+    ) {
         self.id = id
         self.type = type
         self.title = title
@@ -36,4 +38,31 @@ final class Transaction {
 enum TransactionType: String, Codable {
     case expense = "Expense"
     case income = "Income"
+
+    var iconBackgroundColor: Color {
+        switch self {
+        case .income:
+            return Color("greenmonny").opacity(0.2)
+        case .expense:
+            return Color("yellowmonny").opacity(0.2)
+        }
+    }
+
+    var iconColor: Color {
+        switch self {
+        case .income:
+            return .green
+        case .expense:
+            return .orange
+        }
+    }
+
+    var amountColor: Color {
+        switch self {
+        case .income:
+            return Color(red: 0 / 255, green: 180 / 255, blue: 130 / 255)
+        case .expense:
+            return Color("redicon")
+        }
+    }
 }
