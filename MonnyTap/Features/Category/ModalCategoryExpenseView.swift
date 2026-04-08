@@ -12,11 +12,9 @@ struct ModalCategoryExpenseView: View {
     @Binding var selectedCategory: Category?
     // Optional callback when user taps Save
     var onSave: ((Category?) -> Void)?
+    
+    @State private var viewModel = ModalCategoryExpenseViewModel()
 
-    // Use real categories from the enum
-    private let categories: [Category] = Category.allCases
-
-    @State private var tempSelection: Category?
     @Environment(\.dismiss) private var dismiss
 
     // Define the 3-column grid layout
@@ -33,13 +31,13 @@ struct ModalCategoryExpenseView: View {
             
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 20) {
-                    ForEach(categories) { category in
+                    ForEach(viewModel.categories) { category in
                         CategoryCell(
                             category: category,
-                            isSelected: tempSelection == category
+                            isSelected: viewModel.isSelected(category)
                         )
                         .onTapGesture {
-                            tempSelection = category
+                            viewModel.select(category)
                         }
                     }
                 }
@@ -47,7 +45,7 @@ struct ModalCategoryExpenseView: View {
             }
         }
         .onAppear {
-            tempSelection = selectedCategory
+            viewModel.tempSelection = selectedCategory
         }
     }
 
@@ -69,7 +67,7 @@ struct ModalCategoryExpenseView: View {
             Spacer()
 
             Button(action: {
-                let newValue = tempSelection ?? selectedCategory
+                let newValue = viewModel.confirmSelection(currentSelection: selectedCategory)
                 selectedCategory = newValue
                 onSave?(newValue)
                 dismiss()
