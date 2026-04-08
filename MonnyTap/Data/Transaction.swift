@@ -13,7 +13,7 @@ final class Transaction {
     var id: UUID
     var type: TransactionType
     var title: String
-    var amount: Decimal
+    var amount: Int
     var date: Date
     var category: Category?
 
@@ -21,7 +21,7 @@ final class Transaction {
         id: UUID = UUID(),
         type: TransactionType,
         title: String,
-        amount: Decimal,
+        amount: Int,
         date: Date = .now,
         category: Category?     ) {
         self.id = id
@@ -33,7 +33,7 @@ final class Transaction {
     }
 }
 
-enum TransactionType: String {
+enum TransactionType: String, Codable {
     case expense = "Expense"
     case income = "Income"
 }
