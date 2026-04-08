@@ -54,14 +54,14 @@ struct DonutChartView: View {
                                 }
                             }
                     }
-                }
 
-                ForEach(data) { point in
-                    DonutLabel(
-                        point: point,
-                        center: center,
-                        radius: radius + lineWidth / 2 + 30
-                    )
+                    ForEach(data) { point in
+                        DonutLabel(
+                            point: point,
+                            center: center,
+                            radius: radius + lineWidth / 2 + 30
+                        )
+                    }
                 }
 
                 if let selected = selectedPoint {
