@@ -37,7 +37,6 @@ enum Category: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    // Belum fix, nunggu assets warna lebih lanjut
 
     var color: Color {
         switch self {
@@ -53,7 +52,6 @@ enum Category: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    // Belum fix, nunggu assets warna lebih lanjut
 
     var iconColor: Color {
         switch self {

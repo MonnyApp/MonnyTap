@@ -7,44 +7,15 @@
 
 import SwiftUI
 
-/// Data Model
+/// Data Model Chart
 struct ChartDataPoint: Identifiable {
     let id = UUID()
     let category: Category
+    let amount: Double
     let percentage: Double
 
     var startAngle: Double = 0
     var endAngle: Double = 0
-}
-
-// Hardcoded Mock Data ( nanti diganti swiftData)
-extension ChartDataPoint {
-    static let mockData: [ChartDataPoint] = {
-        let raw: [(Category, Double)] = [
-            (.investment, 0.30),
-            (.education, 0.12),
-            (.health, 0.11),
-            (.shopping, 0.10),
-            (.entertainment, 0.04),
-            (.travels, 0.06),
-            (.transportation, 0.04),
-            (.other, 0.15),
-            (.fnb, 0.08),
-        ]
-
-        var result: [ChartDataPoint] = []
-        var cursor: Double = 0
-
-        for (category, pct) in raw {
-            var point = ChartDataPoint(category: category, percentage: pct)
-            point.startAngle = cursor
-            point.endAngle = cursor + pct
-            cursor += pct
-            result.append(point)
-        }
-
-        return result
-    }()
 }
 
 struct DonutChartView: View {
@@ -61,19 +32,24 @@ struct DonutChartView: View {
             let center = CGPoint(x: geo.size.width / 2, y: geo.size.height / 2)
 
             ZStack {
-                ForEach(data) { point in
+                if data.isEmpty {
                     Circle()
-                        .trim(
-                            from: point.startAngle + gapSize,
-                            to: point.endAngle - gapSize
-                        )
-                        .stroke(point.category.color, lineWidth: lineWidth)
-                        .rotationEffect(.degrees(-90))
-                        .onTapGesture {
-                            withAnimation(.spring(duration: 0.25)) {
-                                selectedPoint = selectedPoint?.id == point.id ? nil : point
+                        .stroke(Color(.systemGray5), lineWidth: lineWidth)
+                } else {
+                    ForEach(data) { point in
+                        Circle()
+                            .trim(
+                                from: point.startAngle + gapSize,
+                                to: point.endAngle - gapSize
+                            )
+                            .stroke(point.category.color, lineWidth: lineWidth)
+                            .rotationEffect(.degrees(-90))
+                            .onTapGesture {
+                                withAnimation(.spring(duration: 0.25)) {
+                                    selectedPoint = selectedPoint?.id == point.id ? nil : point
+                                }
                             }
-                        }
+                    }
                 }
 
                 ForEach(data) { point in
@@ -92,7 +68,7 @@ struct DonutChartView: View {
 
                     ChartTooltip(
                         categoryName: selected.category.rawValue,
-                        value: "Rp. \(Int(selected.percentage * 1_680_000_000))",
+                        value: "Rp. \(Int(selected.amount).formatted())",
                         isLeftSide: !isLeftSide
                     )
                     .position(
@@ -141,15 +117,15 @@ struct DonutLabel: View {
 }
 
 struct AnalyticsChartView: View {
-    let data: [ChartDataPoint] = ChartDataPoint.mockData
+    var viewModel: OverviewViewModel
 
     var body: some View {
-        DonutChartView(data: data)
+        DonutChartView(data: viewModel.chartData)
             .frame(width: 200, height: 200)
     }
 }
 
 #Preview {
-    AnalyticsChartView()
+    AnalyticsChartView(viewModel: OverviewViewModel())
         .padding()
 }

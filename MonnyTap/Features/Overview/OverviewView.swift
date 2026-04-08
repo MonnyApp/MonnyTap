@@ -6,13 +6,25 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct OverviewView: View {
+    @Query private var transactions: [Transaction]
+    
+    @State private var viewModel = OverviewViewModel()
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        AnalyticsChartView(viewModel: viewModel)
+            .onAppear {
+                viewModel.loadChartData(from: transactions)
+            }
+            .onChange(of: transactions) {
+                viewModel.loadChartData(from: transactions)
+            }
     }
 }
 
 #Preview {
     OverviewView()
+        .modelContainer(for: Transaction.self, inMemory: true)
 }
