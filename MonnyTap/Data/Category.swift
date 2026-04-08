@@ -41,14 +41,14 @@ enum Category: String, CaseIterable, Identifiable, Codable {
     /*
       var color: Color {
          switch self {
-         case .food:          return .orange
-         case .transport:     return .blue
-         case .shopping:      return .pink
-         case .health:        return .red
-         case .education:     return .purple
-         case .housing:       return .brown
-         case .bills:         return .yellow
-         case .entertainment: return .green
+         case .fnb:          return .orange
+         case .investment:     return .blue
+         case .education:      return .pink
+         case .shopping:        return .red
+         case .entertainment:     return .purple
+         case .health:       return .brown
+         case .travels:         return .yellow
+         case .transportation: return .green
          case .other:         return .gray
          }
      }
@@ -56,18 +56,19 @@ enum Category: String, CaseIterable, Identifiable, Codable {
 
     // Belum fix, nunggu assets warna lebih lanjut
     /*
-      var iconColor: Color {
-         switch self {
-         case .food:          return .orange
-         case .transport:     return .blue
-         case .shopping:      return .pink
-         case .health:        return .red
-         case .education:     return .purple
-         case .housing:       return .brown
-         case .bills:         return .yellow
-         case .entertainment: return .green
-         case .other:         return .gray
-         }
+     var iconColor: Color {
+        switch self {
+        case .fnb:          return .orange
+        case .investment:     return .blue
+        case .education:      return .pink
+        case .shopping:        return .red
+        case .entertainment:     return .purple
+        case .health:       return .brown
+        case .travels:         return .yellow
+        case .transportation: return .green
+        case .other:         return .gray
+        }
+    }
      }
       */
 }

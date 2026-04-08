@@ -11,7 +11,7 @@ import SwiftData
 @Model
 final class Transaction {
     var id: UUID
-    var type: String
+    var type: TransactionType
     var title: String
     var amount: Decimal
     var date: Date
@@ -23,14 +23,13 @@ final class Transaction {
         title: String,
         amount: Decimal,
         date: Date = .now,
-        category: Category? = nil
-    ) {
+        category: Category?     ) {
         self.id = id
-        self.type = type.rawValue
+        self.type = type
         self.title = title
         self.amount = amount
         self.date = date
-        self.category = category?.rawValue
+        self.category = category
     }
 }
 
