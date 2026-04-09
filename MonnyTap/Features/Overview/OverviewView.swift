@@ -7,9 +7,8 @@
 
 import SwiftUI
 import Charts
+import SwiftData
 
-// Warna fallback sementara selama category.color belum diaktifkan
-// Hapus extension ini setelah rekam tim aktifkan color di Category.swift
 private extension Category {
     var tempColor: Color {
         switch self {
@@ -27,7 +26,7 @@ private extension Category {
 }
 
 struct OverviewView: View {
-    @StateObject private var vm = OverviewViewModel()
+    @State private var vm = OverviewViewModel()
     @State private var showAddSheet = false
 
     var body: some View {
@@ -39,7 +38,10 @@ struct OverviewView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     BalanceCardSection(vm: vm)
-                    AnalyticsSection(vm: vm)
+                    AnalyticsChartView(viewModel: vm)
+                        .frame(maxWidth: .infinity)
+                        .padding(.bottom, 16)
+                        .padding(.top, 16)
                     RecentTransactionsSection(vm: vm)
                     Spacer(minLength: 100)
                 }
@@ -66,7 +68,7 @@ struct OverviewView: View {
 // MARK: - Balance Card
 
 private struct BalanceCardSection: View {
-    @ObservedObject var vm: OverviewViewModel
+    @Bindable var vm: OverviewViewModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -119,60 +121,12 @@ private struct BalanceCardSection: View {
 }
 
 
-// MARK: - Analytics (Donut Chart)
-
-private struct AnalyticsSection: View {
-    @ObservedObject var vm: OverviewViewModel
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-
-            Text("Analytics")
-                .font(.title2)
-                .fontWeight(.bold)
-
-            Chart(vm.analyticsData, id: \.0) { item in
-                SectorMark(
-                    angle: .value("Persen", item.1),
-                    innerRadius: .ratio(0.55),
-                    angularInset: 2.5
-                )
-                // pakai tempColor selama color di Category.swift belum diaktifkan
-                .foregroundStyle(item.0.tempColor)
-                .cornerRadius(4)
-            }
-            .frame(height: 220)
-
-            LazyVGrid(
-                columns: Array(repeating: GridItem(.flexible()), count: 3),
-                spacing: 8
-            ) {
-                ForEach(vm.analyticsData, id: \.0) { item in
-                    HStack(spacing: 5) {
-                        Circle()
-                            // pakai tempColor selama color di Category.swift belum diaktifkan
-                            .fill(item.0.tempColor)
-                            .frame(width: 8, height: 8)
-                        Text("\(item.0.rawValue) \(Int(item.1 * 100))%")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                    }
-                }
-            }
-        }
-        .padding(20)
-        .background(Color(.systemBackground))
-        .cornerRadius(16)
-        .shadow(color: .black.opacity(0.07), radius: 8, x: 0, y: 2)
-    }
-}
 
 
 // MARK: - Recent Transactions
 
 private struct RecentTransactionsSection: View {
-    @ObservedObject var vm: OverviewViewModel
+    @Bindable var vm: OverviewViewModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -181,7 +135,6 @@ private struct RecentTransactionsSection: View {
                 Text("Recent Transactions")
                     .font(.title2)
                     .fontWeight(.bold)
-                Spacer()
                 Image(systemName: "chevron.right")
                     .foregroundColor(.secondary)
             }
@@ -276,8 +229,9 @@ private struct AddTransactionFAB: View {
 
 
 // MARK: - Preview
-
 #Preview {
-    OverviewView()
-        .modelContainer(for: Transaction.self, inMemory: true)
+    NavigationStack {
+        OverviewView()
+            .modelContainer(for: Transaction.self, inMemory: true)
+    }
 }

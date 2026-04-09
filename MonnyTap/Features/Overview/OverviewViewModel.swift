@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftUI
-import Combine
 
 @Observable
 class OverviewViewModel {
@@ -47,8 +46,9 @@ class OverviewViewModel {
         chartData = result
       
     }
-    @Published var transactions: [Transaction]       = MockData.transactions
-    @Published var analyticsData: [(Category, Double)] = MockData.analyticsData
+    
+    var transactions: [Transaction]       = MockData.transactions
+    var analyticsData: [(Category, Double)] = MockData.analyticsData
 
     var balance: Int    { MockData.balance }
     var income:  Int    { MockData.income  }
