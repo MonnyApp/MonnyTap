@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 import SwiftData
 
 /// Representasi model data untuk setiap transaksi yang dicatat oleh pengguna.
@@ -42,7 +43,47 @@ final class Transaction {
         self.category = category
     }
 }
+
 enum TransactionType: String, Codable {
     case expense = "Expense"
     case income = "Income"
+
+    var iconBackgroundColor: Color {
+        switch self {
+        case .income:
+            return Color("greenmonny").opacity(0.2)
+        case .expense:
+            return Color("yellowmonny").opacity(0.2)
+        }
+    }
+
+    var iconColor: Color {
+        switch self {
+        case .income:
+            return .green
+        case .expense:
+            return .orange
+        }
+    }
+
+    var amountColor: Color {
+        switch self {
+        case .income:
+            return Color(red: 0 / 255, green: 180 / 255, blue: 130 / 255)
+        case .expense:
+            return Color("redicon")
+        }
+    }
+}
+//sample data
+extension Transaction {
+    static var sampleIncome: Transaction {
+        Transaction(
+            type: .income,
+            title: "Stipend Apple Academy",
+            amount: 5_290_000,
+            date: .now,
+            category: .education
+        )
+    }
 }
