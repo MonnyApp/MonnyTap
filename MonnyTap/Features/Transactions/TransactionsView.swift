@@ -6,13 +6,27 @@
 //
 
 import SwiftUI
-import SwiftData
+//tampilan slide
+struct DateItem: View {
+    let day: String
+    let date: String
+    var isSelected: Bool
+    
+    var body: some View {
+        VStack(spacing: 6) {
+            Text(day).font(.system(size: 12)).foregroundColor(isSelected ? .white : .gray)
+            Text(date).font(.system(size: 14, weight: .bold)).foregroundColor(isSelected ? .white : .black)
+        }
+        .frame(width: 45, height: 60)
+        .background(isSelected ? Color(red: 45/255, green: 110/255, blue: 135/255) : Color.clear)
+        .cornerRadius(12)
+    }
+}
 
 struct TransactionsView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query(sort: \Transaction.date, order: .reverse) var transactions: [Transaction]
+    private let transactions: [Transaction] = [.sampleIncome]
     
-    // State untuk picker tanggal
+    // state untuk picker tanggal
     @State private var selectedDate: String = "02"
     
     let dates = [
@@ -78,33 +92,10 @@ struct TransactionsView: View {
             }
         }
         .background(Color(white: 0.98).ignoresSafeArea())
-        .onAppear { insertDummyIfEmpty() }
-    }
-    
-    private func insertDummyIfEmpty() {
-        if transactions.isEmpty {
-            modelContext.insert(Transaction.previewIncome)
-        }
     }
 }
 
-struct DateItem: View {
-    let day: String
-    let date: String
-    var isSelected: Bool
-    
-    var body: some View {
-        VStack(spacing: 6) {
-            Text(day).font(.system(size: 12)).foregroundColor(isSelected ? .white : .gray)
-            Text(date).font(.system(size: 14, weight: .bold)).foregroundColor(isSelected ? .white : .black)
-        }
-        .frame(width: 45, height: 60)
-        .background(isSelected ? Color(red: 45/255, green: 110/255, blue: 135/255) : Color.clear)
-        .cornerRadius(12)
-    }
-}
 
 #Preview {
     TransactionsView()
-        .modelContainer(for: Transaction.self, inMemory: true)
 }

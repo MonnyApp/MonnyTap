@@ -44,18 +44,6 @@ final class Transaction {
     }
 }
 
-extension Transaction {
-    static var previewIncome: Transaction {
-        Transaction(
-            type: .income,
-            title: "Stipend Apple Academy",
-            amount: 5_290_000,
-            date: .now,
-            category: .education
-        )
-    }
-}
-
 enum TransactionType: String, Codable {
     case expense = "Expense"
     case income = "Income"
@@ -85,5 +73,17 @@ enum TransactionType: String, Codable {
         case .expense:
             return Color("redicon")
         }
+    }
+}
+//sample data
+extension Transaction {
+    static var sampleIncome: Transaction {
+        Transaction(
+            type: .income,
+            title: "Stipend Apple Academy",
+            amount: 5_290_000,
+            date: .now,
+            category: .education
+        )
     }
 }

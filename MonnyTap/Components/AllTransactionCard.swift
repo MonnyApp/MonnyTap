@@ -73,9 +73,8 @@ struct AllTransactionCard: View {
 }
 
 #Preview {
-    AllTransactionCard(transaction: .previewIncome)
+    AllTransactionCard(transaction: .sampleIncome)
         .padding()
         .background(Color.gray.opacity(0.1)) // Agar capsule putih terlihat jelas
         .modelContainer(for: Transaction.self, inMemory: true)
 }
-
