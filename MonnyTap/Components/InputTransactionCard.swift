@@ -25,6 +25,8 @@ struct InputTransactionCard: View {
     @Binding var title: String
 
     private var isEditable: Bool { mode != .detail }
+    
+    var isAmountFocused: FocusState<Bool>.Binding
 
     var body: some View {
         VStack(spacing: 16) {
@@ -42,6 +44,7 @@ struct InputTransactionCard: View {
         .background(Color(.systemGray6))
         .cornerRadius(24)
         .padding(.horizontal)
+
     }
 
     // MARK: - Subviews
@@ -58,6 +61,7 @@ struct InputTransactionCard: View {
                     TextField("0", text: $amount)
                         .font(.system(size: 40, weight: .bold))
                         .keyboardType(.numberPad)
+                        .focused(isAmountFocused)
                 } else {
                     Text(amount)
                         .font(.system(size: 40, weight: .bold))
@@ -162,25 +166,34 @@ struct InputTransactionCard: View {
 
 // MARK: - Preview
 #Preview {
-    ZStack {
-        Color(.systemGroupedBackground).ignoresSafeArea()
-        VStack(spacing: 24) {
-            InputTransactionCard(
-                mode: .input,
-                transactionType: .constant(.expense),
-                amount: .constant("150000"),
-                selectedCategory: .constant(.fnb),
-                date: .constant(.now),
-                title: .constant("")
-            )
-            InputTransactionCard(
-                mode: .detail,
-                transactionType: .constant(.expense),
-                amount: .constant("150000"),
-                selectedCategory: .constant(.fnb),
-                date: .constant(.now),
-                title: .constant("Lunch")
-            )
+    struct PreviewWrapper: View {
+        @FocusState private var isAmountFocused: Bool
+
+        var body: some View {
+            ZStack {
+                Color(.systemGroupedBackground).ignoresSafeArea()
+                VStack(spacing: 24) {
+                    InputTransactionCard(
+                        mode: .input,
+                        transactionType: .constant(.expense),
+                        amount: .constant("150000"),
+                        selectedCategory: .constant(.fnb),
+                        date: .constant(.now),
+                        title: .constant(""),
+                        isAmountFocused: $isAmountFocused
+                    )
+                    InputTransactionCard(
+                        mode: .detail,
+                        transactionType: .constant(.expense),
+                        amount: .constant("150000"),
+                        selectedCategory: .constant(.fnb),
+                        date: .constant(.now),
+                        title: .constant("Lunch"),
+                        isAmountFocused: $isAmountFocused
+                    )
+                }
+            }
         }
     }
+    return PreviewWrapper()
 }

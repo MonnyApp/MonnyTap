@@ -12,16 +12,14 @@ struct InputTransactionsView: View {
     // MARK: - Environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    
-    //MARK: - FOCUS STATE
-    @FocusState private var isAmountFocused: Bool
-    
     // MARK: - State Variables
     @State private var transactionType: TransactionType = .expense
     @State private var amount: String = ""
     @State private var selectedCategory: Category? = .other // Default is .other
     @State private var date: Date = .now
     @State private var title: String = ""
+    // MARK: - Focus state
+    @FocusState private var isAmountFocused: Bool
     
     // MARK: - Main Body
     var body: some View {
@@ -43,7 +41,8 @@ struct InputTransactionsView: View {
                             amount: $amount,
                             selectedCategory: $selectedCategory,
                             date: $date,
-                            title: $title
+                            title: $title,
+                            isAmountFocused: $isAmountFocused
                         )
                         
                     }
@@ -54,6 +53,11 @@ struct InputTransactionsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 navigationToolbar
+            }
+        }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                isAmountFocused = true
             }
         }
     }
