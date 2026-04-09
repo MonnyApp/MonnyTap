@@ -9,22 +9,6 @@ import SwiftUI
 import Charts
 import SwiftData
 
-private extension Category {
-    var tempColor: Color {
-        switch self {
-        case .fnb:            return Color("yellowmonny")
-        case .investment:     return Color("orangemonny")
-        case .education:      return Color("bluemonny")
-        case .shopping:       return Color("pinkmonny")
-        case .entertainment:  return Color("purplemonny")
-        case .health:         return Color("redmonny")
-        case .travels:        return Color("Chocomonny")
-        case .transportation: return Color("toscamonny")
-        case .other:          return Color("greymonny")
-        }
-    }
-}
-
 struct OverviewView: View {
     @State private var vm = OverviewViewModel()
     @State private var showAddSheet = false
@@ -34,14 +18,26 @@ struct OverviewView: View {
 
             Color(.systemGroupedBackground)
                 .ignoresSafeArea()
+            
+            // Background placeholder — nanti ganti Color(...) dengan Image("namaAsset")
+                    VStack(spacing: 0) {
+                        Color("bluemonny")
+                            .frame(height: 220)  // atur tinggi sesuai kebutuhan
+                        Color.clear
+                    }
+                    .ignoresSafeArea(edges: .top)
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     BalanceCardSection(vm: vm)
-                    AnalyticsChartView(viewModel: vm)
-                        .frame(maxWidth: .infinity)
-                        .padding(.bottom, 16)
-                        .padding(.top, 16)
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Analytics")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                        AnalyticsChartView(viewModel: vm)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .padding(.vertical, 8)
                     RecentTransactionsSection(vm: vm)
                     Spacer(minLength: 100)
                 }
@@ -56,7 +52,7 @@ struct OverviewView: View {
         .navigationTitle("Overview")
         .navigationBarTitleDisplayMode(.large)
         .sheet(isPresented: $showAddSheet) {
-            Text("Form tambah transaksi — coming soon")
+            Text("nunggu form inputtt")
                 .font(.title3)
                 .foregroundColor(.secondary)
                 .padding()
@@ -91,25 +87,25 @@ private struct BalanceCardSection: View {
 
             HStack {
                 Image(systemName: "chart.line.uptrend.xyaxis")
-                    .foregroundColor(Color("#1D9E75"))
+                    .foregroundColor(Color("greenincome"))
                 Text("Income")
-                    .foregroundColor(Color("#1D9E75"))
+                    .foregroundColor(Color("greenincome"))
                     .font(.subheadline)
                 Spacer()
                 Text(vm.formatRupiah(vm.income))
-                    .foregroundColor(Color("#1D9E75"))
+                    .foregroundColor(Color("greenincome"))
                     .fontWeight(.semibold)
             }
 
             HStack {
                 Image(systemName: "chart.line.downtrend.xyaxis")
-                    .foregroundColor(Color("#E24B4A"))
+                    .foregroundColor(Color("redexpense"))
                 Text("Expense")
-                    .foregroundColor(Color("#E24B4A"))
+                    .foregroundColor(Color("redexpense"))
                     .font(.subheadline)
                 Spacer()
                 Text(vm.formatRupiah(vm.expense))
-                    .foregroundColor(Color("#E24B4A"))
+                    .foregroundColor(Color("redexpense"))
                     .fontWeight(.semibold)
             }
         }
