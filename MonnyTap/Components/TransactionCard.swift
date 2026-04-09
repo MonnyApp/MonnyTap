@@ -33,7 +33,7 @@ struct TransactionCard: View {
                 Text("Rp 13.000")
                     .font(.title3)
                     .fontWeight(.semibold)
-                    .foregroundColor(Color.red)
+                    .foregroundColor(Color.redexpense)
             }
         }
         .padding(.horizontal, 30)
