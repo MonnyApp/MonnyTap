@@ -22,6 +22,8 @@ struct TransactionsDetailView: View {
     @State private var editCategory: Category? = nil
     @State private var editDate: Date = .now
     @State private var editTitle: String = ""
+    
+    @FocusState private var isAmountFocused: Bool
 
     var body: some View {
         ZStack {
@@ -37,7 +39,8 @@ struct TransactionsDetailView: View {
                         amount: .constant(transaction.amount.formatted()),
                         selectedCategory: .constant(transaction.category),
                         date: .constant(transaction.date),
-                        title: .constant(transaction.title)
+                        title: .constant(transaction.title),
+                        isAmountFocused: $isAmountFocused
                     )
                 }
                 .padding(.vertical)
@@ -98,7 +101,8 @@ struct TransactionsDetailView: View {
                                 amount: $editAmount,
                                 selectedCategory: $editCategory,
                                 date: $editDate,
-                                title: $editTitle
+                                title: $editTitle,
+                                isAmountFocused: $isAmountFocused
                             )
                         }
                         .padding(.vertical)

@@ -36,6 +36,7 @@ struct OverviewView: View {
                             .fontWeight(.bold)
                         AnalyticsChartView(viewModel: vm)
                             .frame(maxWidth: .infinity)
+                            .padding(10)
                     }
                     .padding(.vertical, 8)
                     RecentTransactionsSection(vm: vm)
@@ -52,10 +53,7 @@ struct OverviewView: View {
         .navigationTitle("Overview")
         .navigationBarTitleDisplayMode(.large)
         .sheet(isPresented: $showAddSheet) {
-            Text("nunggu form inputtt")
-                .font(.title3)
-                .foregroundColor(.secondary)
-                .padding()
+            InputTransactionsView()
         }
     }
 }
@@ -137,13 +135,17 @@ private struct RecentTransactionsSection: View {
 
         VStack(alignment: .leading, spacing: 12) {
 
-            HStack {
-                Text("Recent Transactions")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.secondary)
+            NavigationLink(destination: TransactionsView()) {
+                HStack {
+                    Text("Recent Transactions")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
             }
+            .foregroundColor(.primary)
 
             ForEach(vm.transactions.prefix(5)) { t in
                 TransactionCard(transaction: dummy)
@@ -175,7 +177,6 @@ private struct AddTransactionFAB: View {
         .padding(.bottom, 2)
     }
 }
-
 
 // MARK: - Preview
 #Preview {
