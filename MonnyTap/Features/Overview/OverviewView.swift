@@ -19,31 +19,31 @@ struct OverviewView: View {
                 Color(.systemGroupedBackground)
                     .ignoresSafeArea()
 
-                // Background placeholder — nanti ganti Color(...) dengan Image("namaAsset")
-                VStack(spacing: 0) {
-                    Color("bluemonny")
-                        .frame(height: 220) // atur tinggi sesuai kebutuhan
-                    Color.clear
-                }
-                .ignoresSafeArea(edges: .top)
-
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading, spacing: 25) {
                         BalanceCardSection(vm: vm)
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: 5) {
                             Text("Analytics")
                                 .font(.title2)
                                 .fontWeight(.bold)
                             AnalyticsChartView(viewModel: vm)
                                 .frame(maxWidth: .infinity)
-                                .padding(10)
+                                .padding(20)
                         }
-                        .padding(.vertical, 8)
+                        .padding(.vertical, 16)
                         RecentTransactionsSection(vm: vm)
                         Spacer(minLength: 100)
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
+                    .background(
+                        GeometryReader { geo in
+                            // gambarnya shannon nanti taruh sini
+                            Color("bluemonny")
+                                .frame(height: geo.frame(in: .global).minY + 130)
+                                .offset(y: -geo.frame(in: .global).minY)
+                        }
+                    )
                 }
 
                 AddTransactionFAB {
