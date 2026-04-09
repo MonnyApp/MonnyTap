@@ -69,8 +69,8 @@ struct TransactionsView: View {
                     if transactions.isEmpty {
                         Text("No Transactions").foregroundColor(.gray).padding(.top, 50)
                     } else {
-                        ForEach(transactions) { item in
-                            TransactionCard(transaction: item)
+                        ForEach(transactions) { transaction in
+                            AllTransactionCard(transaction: transaction)
                         }
                     }
                 }
@@ -83,14 +83,7 @@ struct TransactionsView: View {
     
     private func insertDummyIfEmpty() {
         if transactions.isEmpty {
-            let dummy = Transaction(
-                type: .income,
-                title: "Stipend Apple Academy",
-                amount: 5_290_000,
-                date: .now,
-                category: .education
-            )
-            modelContext.insert(dummy)
+            modelContext.insert(Transaction.previewIncome)
         }
     }
 }
