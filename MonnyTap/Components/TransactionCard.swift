@@ -15,10 +15,10 @@ struct TransactionCard: View {
                 ZStack {
                     Circle()
                         .fill(Color.yellowmonny)
-                        .frame(width: 52, height: 52)
+                        .frame(width: 35, height: 35)
                     Image(systemName: "fork.knife")
-                        .foregroundColor(.white)
-                        .font(.system(size: 22))
+                        .foregroundColor(Color("yellowicon"))
+                        .font(.system(size: 18))
                 }
                 Text("FnB")
                     .font(.caption)
@@ -36,8 +36,8 @@ struct TransactionCard: View {
                     .foregroundColor(Color.redexpense)
             }
         }
-        .padding(.horizontal, 30)
-        .padding(.vertical, 16)
+        .padding(.horizontal, 25)
+        .padding(.vertical, 5)
         .background(Color(.systemBackground))
         .cornerRadius(50)
         .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)

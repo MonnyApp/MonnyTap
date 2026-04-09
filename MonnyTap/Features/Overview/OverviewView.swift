@@ -140,7 +140,7 @@ private struct RecentTransactionsSection: View {
             }
 
             ForEach(vm.transactions.prefix(5)) { t in
-                TransactionRow(transaction: t, vm: vm)
+                TransactionCard()
             }
         }
     }
@@ -219,11 +219,11 @@ private struct AddTransactionFAB: View {
             .foregroundColor(.white)
             .padding(.horizontal, 36)
             .padding(.vertical, 16)
-            .background(Color("#0F6E56"))
+            .background(Color("blueactionbutton"))
             .cornerRadius(30)
             .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 4)
         }
-        .padding(.bottom, 28)
+        .padding(.bottom, 2)
     }
 }
 
