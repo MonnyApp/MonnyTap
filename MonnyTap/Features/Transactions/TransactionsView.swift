@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-//tampilan slide
+// tampilan slide
 struct DateItem: View {
     let date: Date
     var isSelected: Bool
@@ -23,7 +23,7 @@ struct DateItem: View {
         formatter.dateFormat = "dd"
         return formatter
     }()
-    
+
     var body: some View {
         VStack(spacing: 6) {
             Text(Self.dayFormatter.string(from: date))
@@ -41,7 +41,7 @@ struct DateItem: View {
 
 struct TransactionsView: View {
     private let transactions: [Transaction] = [.sampleIncome]
-    
+
     // Tanggal aktif selalu menjadi item tengah pada date picker.
     @State private var selectedDate = Calendar.current.startOfDay(for: .now)
     @State private var isDatePickerPresented = false
@@ -58,23 +58,69 @@ struct TransactionsView: View {
             set: { selectedDate = Calendar.current.startOfDay(for: $0) }
         )
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
-            // --- HEADER ---
+            // FUNCTIONAL DATE PICKER
             HStack {
-                Button(action: {}) {
+                Button(action: { moveSelectedDate(by: -1) }) {
                     Image(systemName: "chevron.left")
-                        .padding(10)
-                        .background(Circle().fill(Color.gray.opacity(0.05)))
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.blue)
                 }
+
                 Spacer()
-                Text("Transactions").font(.system(size: 18, weight: .bold))
+
+                HStack(spacing: 15) {
+                    ForEach(visibleDates, id: \.self) { date in
+                        DateItem(
+                            date: date,
+                            isSelected: Calendar.current.isDate(date, inSameDayAs: selectedDate)
+                        )
+                        .onTapGesture {
+                            withAnimation(.spring()) {
+                                selectedDate = Calendar.current.startOfDay(for: date)
+                            }
+                        }
+                    }
+                }
+
                 Spacer()
+
+                Button(action: { moveSelectedDate(by: 1) }) {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.blue)
+                }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 12)
+
+            // TRANSACTION LIST
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 15) {
+                    if transactions.isEmpty {
+                        Text("No Transactions")
+                            .foregroundColor(.gray)
+                            .padding(.top, 50)
+                    } else {
+                        ForEach(transactions) { transaction in
+                            AllTransactionCard(transaction: transaction)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+            }
+        }
+        .background(Color(white: 0.98).ignoresSafeArea())
+        .navigationTitle("Transactions")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
                 Button(action: { isDatePickerPresented = true }) {
                     Image(systemName: "calendar")
-                        .padding(10)
-                        .background(RoundedRectangle(cornerRadius: 10).fill(Color.gray.opacity(0.05)))
+                        .padding(6)
+                        
                 }
                 .popover(isPresented: $isDatePickerPresented, arrowEdge: .top) {
                     VStack(spacing: 16) {
@@ -96,56 +142,20 @@ struct TransactionsView: View {
                     .presentationCompactAdaptation(.popover)
                 }
             }
-            .padding(.horizontal)
-            .padding(.top, 10)
-            
-            // --- FUNCTIONAL DATE PICKER ---
-            HStack {
-                Button(action: { moveSelectedDate(by: -1) }) { Image(systemName: "chevron.left") }
-                
-                HStack(spacing: 15) {
-                    ForEach(visibleDates, id: \.self) { date in
-                        DateItem(date: date, isSelected: Calendar.current.isDate(date, inSameDayAs: selectedDate))
-                            .onTapGesture {
-                                withAnimation(.spring()) {
-                                    selectedDate = Calendar.current.startOfDay(for: date)
-                                }
-                            }
-                    }
-                }
-                .padding(.vertical, 5)
-                
-                Button(action: { moveSelectedDate(by: 1) }) { Image(systemName: "chevron.right") }
-            }
-            .padding(.horizontal)
-            .padding(.vertical, 20)
-            
-            // --- TRANSACTION LIST ---
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 15) {
-                    if transactions.isEmpty {
-                        Text("No Transactions").foregroundColor(.gray).padding(.top, 50)
-                    } else {
-                        ForEach(transactions) { transaction in
-                            AllTransactionCard(transaction: transaction)
-                        }
-                    }
-                }
-                .padding(.horizontal)
-            }
         }
-        .background(Color(white: 0.98).ignoresSafeArea())
     }
 
     private func moveSelectedDate(by days: Int) {
         withAnimation(.spring()) {
-            selectedDate = Calendar.current.date(byAdding: .day, value: days, to: selectedDate) ?? selectedDate
+            selectedDate = Calendar.current.date(
+                byAdding: .day, value: days, to: selectedDate
+            ) ?? selectedDate
         }
     }
-
 }
 
-
 #Preview {
-    TransactionsView()
+    NavigationStack {
+        TransactionsView()
+    }
 }
