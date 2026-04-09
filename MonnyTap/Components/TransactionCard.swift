@@ -18,7 +18,7 @@ struct TransactionCard: View {
                     ZStack {
                         Circle()
                             .fill(transaction.category?.color ?? Color.gray.opacity(0.5))
-                            .frame(width: 52, height: 52)
+                            .frame(width: 40, height: 40)
                         Image(systemName: transaction.category?.icon ?? "creditcard")
                             .foregroundColor(transaction.category?.iconColor ?? .white)
                             .font(.system(size: 22))
@@ -39,8 +39,8 @@ struct TransactionCard: View {
                         .foregroundColor(transaction.type == .expense ? Color.redexpense : Color.greenincome)
                 }
             }
-            .padding(.horizontal, 30)
-            .padding(.vertical, 16)
+            .padding(.horizontal, 25)
+            .padding(.vertical, 5)
             .background(Color(.systemBackground))
             .cornerRadius(50)
             .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
