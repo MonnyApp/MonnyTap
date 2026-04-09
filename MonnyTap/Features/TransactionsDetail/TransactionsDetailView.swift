@@ -15,6 +15,7 @@ struct TransactionsDetailView: View {
     let transaction: Transaction
 
     @State private var showEditSheet = false
+    @State private var showDeleteAlert = false
 
     @State private var editType: TransactionType = .expense
     @State private var editAmount: String = ""
@@ -59,8 +60,7 @@ struct TransactionsDetailView: View {
                     }
 
                     Button(role: .destructive) {
-                        modelContext.delete(transaction)
-                        dismiss()
+                        showDeleteAlert = true
                     } label: {
                         Label("Delete", systemImage: "trash")
                     }
@@ -68,6 +68,15 @@ struct TransactionsDetailView: View {
                     Image(systemName: "ellipsis")
                 }
             }
+        }
+        .alert("Delete This Item", isPresented: $showDeleteAlert) {
+            Button("Delete", role: .destructive) {
+                modelContext.delete(transaction)
+                dismiss()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Are you sure you want to delete \"\(transaction.title)\" Transactions?.")
         }
         .sheet(isPresented: $showEditSheet) {
             NavigationStack {
