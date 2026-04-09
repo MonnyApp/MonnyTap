@@ -47,6 +47,7 @@ struct TransactionsDetailView: View {
             .background(Color.white)
             .clipShape(Capsule())
             .padding(.horizontal)
+            .shadow(radius: 2)
     }
 }
 
