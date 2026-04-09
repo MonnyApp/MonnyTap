@@ -53,10 +53,7 @@ struct OverviewView: View {
         .navigationTitle("Overview")
         .navigationBarTitleDisplayMode(.large)
         .sheet(isPresented: $showAddSheet) {
-            Text("nunggu form inputtt")
-                .font(.title3)
-                .foregroundColor(.secondary)
-                .padding()
+            InputTransactionsView()
         }
     }
 }
@@ -180,7 +177,6 @@ private struct AddTransactionFAB: View {
         .padding(.bottom, 2)
     }
 }
-
 
 // MARK: - Preview
 #Preview {
