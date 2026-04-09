@@ -5,59 +5,59 @@
 //  Created by Fikrah Damar Huda on 07/04/26.
 //
 
-import SwiftUI
 import Charts
 import SwiftData
+import SwiftUI
 
 struct OverviewView: View {
     @State private var vm = OverviewViewModel()
     @State private var showAddSheet = false
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        NavigationStack {
+            ZStack(alignment: .bottom) {
+                Color(.systemGroupedBackground)
+                    .ignoresSafeArea()
 
-            Color(.systemGroupedBackground)
-                .ignoresSafeArea()
-            
-            // Background placeholder — nanti ganti Color(...) dengan Image("namaAsset")
-                    VStack(spacing: 0) {
-                        Color("bluemonny")
-                            .frame(height: 220)  // atur tinggi sesuai kebutuhan
-                        Color.clear
-                    }
-                    .ignoresSafeArea(edges: .top)
-
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    BalanceCardSection(vm: vm)
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Analytics")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                        AnalyticsChartView(viewModel: vm)
-                            .frame(maxWidth: .infinity)
-                            .padding(10)
-                    }
-                    .padding(.vertical, 8)
-                    RecentTransactionsSection(vm: vm)
-                    Spacer(minLength: 100)
+                // Background placeholder — nanti ganti Color(...) dengan Image("namaAsset")
+                VStack(spacing: 0) {
+                    Color("bluemonny")
+                        .frame(height: 220) // atur tinggi sesuai kebutuhan
+                    Color.clear
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
-            }
+                .ignoresSafeArea(edges: .top)
 
-            AddTransactionFAB {
-                showAddSheet = true
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        BalanceCardSection(vm: vm)
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Analytics")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                            AnalyticsChartView(viewModel: vm)
+                                .frame(maxWidth: .infinity)
+                                .padding(10)
+                        }
+                        .padding(.vertical, 8)
+                        RecentTransactionsSection(vm: vm)
+                        Spacer(minLength: 100)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+                }
+
+                AddTransactionFAB {
+                    showAddSheet = true
+                }
             }
-        }
-        .navigationTitle("Overview")
-        .navigationBarTitleDisplayMode(.large)
-        .sheet(isPresented: $showAddSheet) {
-            InputTransactionsView()
+            .navigationTitle("Overview")
+            .navigationBarTitleDisplayMode(.large)
+            .sheet(isPresented: $showAddSheet) {
+                InputTransactionsView()
+            }
         }
     }
 }
-
 
 // MARK: - Balance Card
 
@@ -66,7 +66,6 @@ private struct BalanceCardSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-
             HStack {
                 Text("Balance")
                     .foregroundColor(.secondary)
@@ -114,16 +113,12 @@ private struct BalanceCardSection: View {
     }
 }
 
-
-
-
 // MARK: - Recent Transactions
 
 private struct RecentTransactionsSection: View {
     @Bindable var vm: OverviewViewModel
 
     var body: some View {
-        
         // hapus
         let dummy = Transaction(
             type: .expense,
@@ -134,7 +129,6 @@ private struct RecentTransactionsSection: View {
         )
 
         VStack(alignment: .leading, spacing: 12) {
-
             NavigationLink(destination: TransactionsView()) {
                 HStack {
                     Text("Recent Transactions")
@@ -147,7 +141,7 @@ private struct RecentTransactionsSection: View {
             }
             .foregroundColor(.primary)
 
-            ForEach(vm.transactions.prefix(5)) { t in
+            ForEach(vm.transactions.prefix(5)) { _ in
                 TransactionCard(transaction: dummy)
             }
         }
@@ -179,9 +173,8 @@ private struct AddTransactionFAB: View {
 }
 
 // MARK: - Preview
+
 #Preview {
-    NavigationStack {
-        OverviewView()
-            .modelContainer(for: Transaction.self, inMemory: true)
-    }
+    OverviewView()
+        .modelContainer(for: Transaction.self, inMemory: true)
 }
