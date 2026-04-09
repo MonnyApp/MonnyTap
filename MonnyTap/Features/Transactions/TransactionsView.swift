@@ -6,16 +6,32 @@
 //
 
 import SwiftUI
+
 //tampilan slide
 struct DateItem: View {
-    let day: String
-    let date: String
+    let date: Date
     var isSelected: Bool
+
+    private static let dayFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEE"
+        return formatter
+    }()
+
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd"
+        return formatter
+    }()
     
     var body: some View {
         VStack(spacing: 6) {
-            Text(day).font(.system(size: 12)).foregroundColor(isSelected ? .white : .gray)
-            Text(date).font(.system(size: 14, weight: .bold)).foregroundColor(isSelected ? .white : .black)
+            Text(Self.dayFormatter.string(from: date))
+                .font(.system(size: 12))
+                .foregroundColor(isSelected ? .white : .gray)
+            Text(Self.dateFormatter.string(from: date))
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(isSelected ? .white : .black)
         }
         .frame(width: 45, height: 60)
         .background(isSelected ? Color(red: 45/255, green: 110/255, blue: 135/255) : Color.clear)
@@ -26,14 +42,22 @@ struct DateItem: View {
 struct TransactionsView: View {
     private let transactions: [Transaction] = [.sampleIncome]
     
-    // state untuk picker tanggal
-    @State private var selectedDate: String = "02"
-    
-    let dates = [
-        (day: "Fri", date: "31"), (day: "Sat", date: "01"),
-        (day: "Sun", date: "02"), (day: "Mon", date: "03"),
-        (day: "Tue", date: "04"), (day: "Wed", date: "05")
-    ]
+    // Tanggal aktif selalu menjadi item tengah pada date picker.
+    @State private var selectedDate = Calendar.current.startOfDay(for: .now)
+    @State private var isDatePickerPresented = false
+
+    private var visibleDates: [Date] {
+        (-2...2).compactMap {
+            Calendar.current.date(byAdding: .day, value: $0, to: selectedDate)
+        }
+    }
+
+    private var selectedDateBinding: Binding<Date> {
+        Binding(
+            get: { selectedDate },
+            set: { selectedDate = Calendar.current.startOfDay(for: $0) }
+        )
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -47,10 +71,29 @@ struct TransactionsView: View {
                 Spacer()
                 Text("Transactions").font(.system(size: 18, weight: .bold))
                 Spacer()
-                Button(action: {}) {
+                Button(action: { isDatePickerPresented = true }) {
                     Image(systemName: "calendar")
                         .padding(10)
                         .background(RoundedRectangle(cornerRadius: 10).fill(Color.gray.opacity(0.05)))
+                }
+                .popover(isPresented: $isDatePickerPresented, arrowEdge: .top) {
+                    VStack(spacing: 16) {
+                        DatePicker(
+                            "Select Date",
+                            selection: selectedDateBinding,
+                            displayedComponents: .date
+                        )
+                        .datePickerStyle(.graphical)
+                        .padding()
+
+                        Button("Done") {
+                            isDatePickerPresented = false
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .padding(.bottom)
+                    }
+                    .frame(width: 340)
+                    .presentationCompactAdaptation(.popover)
                 }
             }
             .padding(.horizontal)
@@ -58,21 +101,21 @@ struct TransactionsView: View {
             
             // --- FUNCTIONAL DATE PICKER ---
             HStack {
-                Button(action: {}) { Image(systemName: "chevron.left") }
+                Button(action: { moveSelectedDate(by: -1) }) { Image(systemName: "chevron.left") }
                 
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 15) {
-                        ForEach(dates, id: \.date) { item in
-                            DateItem(day: item.day, date: item.date, isSelected: selectedDate == item.date)
-                                .onTapGesture {
-                                    withAnimation(.spring()) { selectedDate = item.date }
+                HStack(spacing: 15) {
+                    ForEach(visibleDates, id: \.self) { date in
+                        DateItem(date: date, isSelected: Calendar.current.isDate(date, inSameDayAs: selectedDate))
+                            .onTapGesture {
+                                withAnimation(.spring()) {
+                                    selectedDate = Calendar.current.startOfDay(for: date)
                                 }
-                        }
+                            }
                     }
-                    .padding(.vertical, 5)
                 }
+                .padding(.vertical, 5)
                 
-                Button(action: {}) { Image(systemName: "chevron.right") }
+                Button(action: { moveSelectedDate(by: 1) }) { Image(systemName: "chevron.right") }
             }
             .padding(.horizontal)
             .padding(.vertical, 20)
@@ -93,6 +136,13 @@ struct TransactionsView: View {
         }
         .background(Color(white: 0.98).ignoresSafeArea())
     }
+
+    private func moveSelectedDate(by days: Int) {
+        withAnimation(.spring()) {
+            selectedDate = Calendar.current.date(byAdding: .day, value: days, to: selectedDate) ?? selectedDate
+        }
+    }
+
 }
 
 
