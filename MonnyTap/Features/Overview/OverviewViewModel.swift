@@ -1,7 +1,7 @@
 //
 //  OverviewViewModel.swift
 //  MonnyTap
-
+//
 //  Created by Ivone Liwang on 08/04/26.
 //
 
@@ -10,7 +10,30 @@ import SwiftUI
 
 @Observable
 class OverviewViewModel {
+
+    // MARK: - Data
     var chartData: [ChartDataPoint] = []
+    var transactions: [Transaction] = MockData.transactions
+
+    var balance: Int    { MockData.balance }
+    var income:  Int    { MockData.income  }
+    var expense: Int    { MockData.expense }
+    var month:   String { MockData.month   }
+
+    // MARK: - Init
+    // loadChartData dipanggil otomatis begitu ViewModel dibuat
+    init() {
+        loadChartData(from: MockData.transactions)
+    }
+
+    // MARK: - Aksi
+
+    func addTransaction(_ t: Transaction) {
+        transactions.insert(t, at: 0)
+        loadChartData(from: transactions) // chart ikut update saat ada transaksi baru
+    }
+
+    // MARK: - Chart Logic
 
     func loadChartData(from transactions: [Transaction]) {
         let expenses = transactions.filter { $0.type == .expense && $0.category != nil }
@@ -38,31 +61,15 @@ class OverviewViewModel {
                 percentage: pct
             )
             point.startAngle = cursor
-            point.endAngle = cursor + pct
-            cursor += pct
+            point.endAngle   = cursor + pct
+            cursor          += pct
             result.append(point)
         }
 
         chartData = result
-      
-    }
-    
-    var transactions: [Transaction]       = MockData.transactions
-    var analyticsData: [(Category, Double)] = MockData.analyticsData
-
-    var balance: Int    { MockData.balance }
-    var income:  Int    { MockData.income  }
-    var expense: Int    { MockData.expense }
-    var month:   String { MockData.month   }
-
-    // MARK: - Aksi
-
-    func addTransaction(_ t: Transaction) {
-        transactions.insert(t, at: 0)
     }
 
     // MARK: - Format Rupiah
-    // Contoh: 5000000 → "Rp 5.000.000"
 
     func formatRupiah(_ amount: Int) -> String {
         let formatter = NumberFormatter()
