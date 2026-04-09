@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 
+/// Representasi kategori untuk setiap transaksi pengeluaran.
+/// Enum ini memuat daftar kategori beserta ikon SF Symbols dan warna uniknya untuk keperluan UI.
 enum Category: String, CaseIterable, Identifiable, Codable {
     case fnb = "FnB"
     case investment = "Investment"
@@ -18,11 +20,13 @@ enum Category: String, CaseIterable, Identifiable, Codable {
     case travels = "Travels"
     case transportation = "Transportation"
     case other = "Other"
-
+    
+    /// ID unik yang dibutuhkan oleh protokol `Identifiable`, menggunakan nilai String bawaan (rawValue).
     var id: String {
         rawValue
     }
-
+    
+    /// Mengembalikan nama ikon SF Symbols yang sesuai dengan kategori.
     var icon: String {
         switch self {
         case .fnb: return "fork.knife"
@@ -36,34 +40,35 @@ enum Category: String, CaseIterable, Identifiable, Codable {
         case .other: return "lightbulb.fill"
         }
     }
-
-
+    
+    /// Mengembalikan warna latar belakang lingkaran dari Assets Catalog.
     var color: Color {
         switch self {
-        case .fnb: return Color("yellowmonny")
-        case .investment: return Color("orangemonny")
-        case .education: return Color("bluemonny")
-        case .shopping: return Color("pinkmonny")
-        case .entertainment: return Color("purplemonny")
-        case .health: return Color("redmonny")
-        case .travels: return Color("Chocomonny")
+        case .fnb:          return Color("yellowmonny")
+        case .investment:     return Color("orangemonny")
+        case .education:      return Color("bluemonny")
+        case .shopping:        return Color("pinkmonny")
+        case .entertainment:     return Color("purplemonny")
+        case .health:       return Color("redmonny")
+        case .travels:         return Color("Chocomonny")
         case .transportation: return Color("toscamonny")
-        case .other: return Color("greymonny")
+        case .other:         return Color("greymonny")
         }
     }
-
-
+    
+    /// Mengembalikan warna solid untuk ikon dari Assets Catalog.
     var iconColor: Color {
         switch self {
-        case .fnb: return Color("yellowicon")
-        case .investment: return Color("orangeicon")
-        case .education: return Color("blueicon")
-        case .shopping: return Color("pinkicon")
-        case .entertainment: return Color("purpleicon")
-        case .health: return Color("redicon")
-        case .travels: return Color("chocoicon")
+        case .fnb:          return Color("yellowicon")
+        case .investment:     return Color("orangeicon")
+        case .education:      return Color("blueicon")
+        case .shopping:        return Color("pinkicon")
+        case .entertainment:     return Color("purpleicon")
+        case .health:       return Color("redicon")
+        case .travels:         return Color("chocoicon")
         case .transportation: return Color("toscaicon")
-        case .other: return Color("greyicon")
+        case .other:         return Color("greyicon")
         }
     }
 }
+
