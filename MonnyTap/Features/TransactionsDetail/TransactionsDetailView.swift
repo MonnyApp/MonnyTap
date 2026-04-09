@@ -150,9 +150,10 @@ struct TransactionsDetailView: View {
             .fontWeight(.semibold)
             .padding(.vertical, 8)
             .frame(maxWidth: .infinity)
-            .background(Color(.systemGray4))
+            .background(Color.white)
             .clipShape(Capsule())
             .padding(.horizontal)
+            .shadow(radius: 3)
     }
 }
 
