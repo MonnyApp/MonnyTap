@@ -7,23 +7,34 @@
 
 import SwiftUI
 
+enum CardMode {
+    case input
+    case edit
+    case detail
+}
+
 struct InputTransactionCard: View {
+    // MARK: - Mode
+    var mode: CardMode = .input
+
     // MARK: - Bindings (Connected to Parent View)
     @Binding var transactionType: TransactionType
     @Binding var amount: String
     @Binding var selectedCategory: Category?
     @Binding var date: Date
     @Binding var title: String
-    
+
+    private var isEditable: Bool { mode != .detail }
+
     var body: some View {
         VStack(spacing: 16) {
             amountInputView
-            
+
             // Only show category if it's an expense
             if transactionType == .expense {
                 categoryRowView
             }
-            
+
             dateRowView
             nameRowView
         }
@@ -32,9 +43,9 @@ struct InputTransactionCard: View {
         .cornerRadius(24)
         .padding(.horizontal)
     }
-    
+
     // MARK: - Subviews
-    
+
     private var amountInputView: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .top) {
@@ -42,10 +53,15 @@ struct InputTransactionCard: View {
                     .font(.title3)
                     .fontWeight(.semibold)
                     .padding(.top, 8)
-                
-                TextField("0", text: $amount)
-                    .font(.system(size: 40, weight: .bold))
-                    .keyboardType(.numberPad)
+
+                if isEditable {
+                    TextField("0", text: $amount)
+                        .font(.system(size: 40, weight: .bold))
+                        .keyboardType(.numberPad)
+                } else {
+                    Text(amount)
+                        .font(.system(size: 40, weight: .bold))
+                }
             }
         }
         .padding()
@@ -53,63 +69,90 @@ struct InputTransactionCard: View {
         .background(Color(UIColor.secondarySystemGroupedBackground))
         .cornerRadius(16)
     }
-    
+
+    @ViewBuilder
     private var categoryRowView: some View {
-        NavigationLink {
-            // This works perfectly because the parent view has the NavigationStack!
-            ModalCategoryExpenseView(selectedCategory: $selectedCategory)
-        } label: {
-            HStack {
-                ZStack {
-                    Circle()
-                        .fill(selectedCategory?.color ?? Color.gray.opacity(0.5))
-                        .frame(width: 32, height: 32)
-                    
-                    if let category = selectedCategory {
-                        Image(systemName: category.icon)
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(category.iconColor)
-                    }
+        if isEditable {
+            NavigationLink {
+                ModalCategoryExpenseView(selectedCategory: $selectedCategory)
+            } label: {
+                HStack {
+                    categoryIconAndLabel
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(.gray)
+                        .font(.system(size: 14, weight: .semibold))
                 }
-                
-                Text(selectedCategory?.rawValue ?? "Category")
-                    .font(.body)
-                    .foregroundColor(.primary)
-                
+                .padding()
+                .background(Color(UIColor.secondarySystemGroupedBackground))
+                .cornerRadius(16)
+            }
+            .buttonStyle(PlainButtonStyle())
+        } else {
+            HStack {
+                categoryIconAndLabel
                 Spacer()
-                
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.gray)
-                    .font(.system(size: 14, weight: .semibold))
             }
             .padding()
             .background(Color(UIColor.secondarySystemGroupedBackground))
             .cornerRadius(16)
         }
-        .buttonStyle(PlainButtonStyle())
     }
-    
+
+    private var categoryIconAndLabel: some View {
+        HStack {
+            ZStack {
+                Circle()
+                    .fill(selectedCategory?.color ?? Color.gray.opacity(0.5))
+                    .frame(width: 32, height: 32)
+
+                if let category = selectedCategory {
+                    Image(systemName: category.icon)
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(category.iconColor)
+                }
+            }
+
+            Text(selectedCategory?.rawValue ?? "Category")
+                .font(.body)
+                .foregroundColor(.primary)
+        }
+    }
+
     private var dateRowView: some View {
         HStack {
             Text("Date")
                 .font(.body)
             Spacer()
-            DatePicker("", selection: $date, displayedComponents: [.date, .hourAndMinute])
-                .labelsHidden()
+            if isEditable {
+                DatePicker("", selection: $date, displayedComponents: [.date, .hourAndMinute])
+                    .labelsHidden()
+            } else {
+                Text(date.formatted(date: .abbreviated, time: .shortened))
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+            }
         }
         .padding()
         .background(Color(UIColor.secondarySystemGroupedBackground))
         .cornerRadius(16)
     }
-    
+
     private var nameRowView: some View {
         HStack {
             Text("Name")
                 .font(.body)
                 .frame(width: 60, alignment: .leading)
-            
-            TextField("", text: $title)
-                .font(.body)
+
+            if isEditable {
+                TextField("", text: $title)
+                    .font(.body)
+            } else {
+                Text(title)
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                Spacer()
+            }
         }
         .padding()
         .background(Color(UIColor.secondarySystemGroupedBackground))
@@ -119,15 +162,25 @@ struct InputTransactionCard: View {
 
 // MARK: - Preview
 #Preview {
-    // We use .constant() just to provide dummy data for the Canvas preview
     ZStack {
         Color(.systemGroupedBackground).ignoresSafeArea()
-        InputTransactionCard(
-            transactionType: .constant(.expense),
-            amount: .constant("150000"),
-            selectedCategory: .constant(.fnb),
-            date: .constant(.now),
-            title: .constant("Lunch")
-        )
+        VStack(spacing: 24) {
+            InputTransactionCard(
+                mode: .input,
+                transactionType: .constant(.expense),
+                amount: .constant("150000"),
+                selectedCategory: .constant(.fnb),
+                date: .constant(.now),
+                title: .constant("")
+            )
+            InputTransactionCard(
+                mode: .detail,
+                transactionType: .constant(.expense),
+                amount: .constant("150000"),
+                selectedCategory: .constant(.fnb),
+                date: .constant(.now),
+                title: .constant("Lunch")
+            )
+        }
     }
 }

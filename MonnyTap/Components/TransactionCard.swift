@@ -6,45 +6,60 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct TransactionCard: View {
+    let transaction: Transaction
+
     var body: some View {
-        HStack(spacing: 16) {
-
-            VStack(spacing: 4) {
-                ZStack {
-                    Circle()
-                        .fill(Color.yellowmonny)
-                        .frame(width: 52, height: 52)
-                    Image(systemName: "fork.knife")
-                        .foregroundColor(.white)
-                        .font(.system(size: 22))
+        NavigationLink(destination: TransactionsDetailView(transaction: transaction)) {
+            HStack(spacing: 16) {
+                VStack(spacing: 4) {
+                    ZStack {
+                        Circle()
+                            .fill(transaction.category?.color ?? Color.gray.opacity(0.5))
+                            .frame(width: 52, height: 52)
+                        Image(systemName: transaction.category?.icon ?? "creditcard")
+                            .foregroundColor(transaction.category?.iconColor ?? .white)
+                            .font(.system(size: 22))
+                    }
+                    Text(transaction.category?.rawValue ?? "Other")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
-                Text("FnB")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
 
-            Spacer()
+                Spacer()
 
-            VStack(alignment: .trailing, spacing: 4) {
-                Text("Ayam Geprek Wani")
-                    .font(.subheadline)
-                Text("Rp 13.000")
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color.redexpense)
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text(transaction.title)
+                        .font(.subheadline)
+                    Text("Rp \(transaction.amount.formatted())")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundColor(transaction.type == .expense ? Color.redexpense : Color.greenincome)
+                }
             }
+            .padding(.horizontal, 30)
+            .padding(.vertical, 16)
+            .background(Color(.systemBackground))
+            .cornerRadius(50)
+            .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
+            .padding(.horizontal)
         }
-        .padding(.horizontal, 30)
-        .padding(.vertical, 16)
-        .background(Color(.systemBackground))
-        .cornerRadius(50)
-        .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
-        .padding(.horizontal)
+        .buttonStyle(PlainButtonStyle())
     }
 }
 
 #Preview {
-    TransactionCard()
+    let dummy = Transaction(
+        type: .expense,
+        title: "Ayam Geprek Wani",
+        amount: 13_000,
+        date: .now,
+        category: .fnb
+    )
+    NavigationStack {
+        TransactionCard(transaction: dummy)
+    }
+    .modelContainer(for: Transaction.self, inMemory: true)
 }
