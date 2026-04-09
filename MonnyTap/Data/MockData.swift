@@ -11,69 +11,55 @@ import Foundation
 // FILE INI ADALAH DATA DUMMY SEMENTARA
 //
 // UNTUK REKAN TIM:
-// Ketika data asli sudah siap, file ini tidak perlu dipakai.
-// Cukup hapus MockData dari FinanceViewModel dan ganti
-// dengan query SwiftData yang sesungguhnya.
+// Ketika data asli SwiftData sudah siap, hapus file ini
+// dan ganti properti di OverviewViewModel dengan
+// query SwiftData sesungguhnya.
 // ============================================================
 
 struct MockData {
 
-    // Ringkasan saldo — sesuai screenshot
     static let balance: Int    = 5_000_000
     static let income:  Int    = 58_000_000
     static let expense: Int    = 30_000
     static let month:   String = "August, 2026"
 
-    // Daftar transaksi — sesuai screenshot
     static let transactions: [Transaction] = [
-        Transaction(
-            type: .expense,
-            title: "Ayam Geprek Wani",
-            amount: 13_000,
-            date: .now,
-            category: .fnb
-        ),
-        Transaction(
-            type: .income,
-            title: "Stipen Apple Developer Academy",
-            amount: 5_290_000,
-            date: .now,
-            category: .investment
-        ),
-        Transaction(
-            type: .expense,
-            title: "Bali Trip",
-            amount: 53_000,
-            date: .now,
-            category: .travels
-        ),
-        Transaction(
-            type: .expense,
-            title: "Sketchbook",
-            amount: 13_000,
-            date: .now,
-            category: .shopping
-        ),
-        Transaction(
-            type: .expense,
-            title: "Mie ayam enak",
-            amount: 13_000,
-            date: .now,
-            category: .fnb
-        ),
-    ]
 
-    // Data donut chart — sesuai screenshot
-    // Tuple: (kategori, persentase 0.0–1.0)
-    static let analyticsData: [(Category, Double)] = [
-        (.transportation, 0.30),
-        (.education,      0.12),
-        (.investment,     0.11),
-        (.shopping,       0.10),
-        (.other,          0.15),
-        (.fnb,            0.08),
-        (.travels,        0.06),
-        (.entertainment,  0.04),
-        (.health,         0.04),
+        // Income
+        Transaction(type: .income,  title: "Stipen Apple Developer Academy", amount: 5_290_000, date: .now, category: .investment),
+
+        // FnB
+        Transaction(type: .expense, title: "Ayam Geprek Wani",   amount: 13_000,  date: .now, category: .fnb),
+        Transaction(type: .expense, title: "Mie ayam enak",      amount: 13_000,  date: .now, category: .fnb),
+        Transaction(type: .expense, title: "Kopi Kenangan",      amount: 25_000,  date: .now, category: .fnb),
+
+        // Travels
+        Transaction(type: .expense, title: "Bali Trip",          amount: 53_000,  date: .now, category: .travels),
+        Transaction(type: .expense, title: "Tiket kereta",       amount: 75_000,  date: .now, category: .travels),
+
+        // Shopping
+        Transaction(type: .expense, title: "Sketchbook",         amount: 13_000,  date: .now, category: .shopping),
+        Transaction(type: .expense, title: "Baju baru",          amount: 120_000, date: .now, category: .shopping),
+
+        // Transportation
+        Transaction(type: .expense, title: "Grab ke kampus",     amount: 25_000,  date: .now, category: .transportation),
+        Transaction(type: .expense, title: "Bensin",             amount: 50_000,  date: .now, category: .transportation),
+        Transaction(type: .expense, title: "Parkir mall",        amount: 10_000,  date: .now, category: .transportation),
+
+        // Education
+        Transaction(type: .expense, title: "Buku Swift",         amount: 120_000, date: .now, category: .education),
+        Transaction(type: .expense, title: "Kursus online",      amount: 150_000, date: .now, category: .education),
+
+        // Entertainment
+        Transaction(type: .expense, title: "Netflix",            amount: 54_000,  date: .now, category: .entertainment),
+        Transaction(type: .expense, title: "Spotify",            amount: 29_000,  date: .now, category: .entertainment),
+
+        // Health
+        Transaction(type: .expense, title: "Beli obat",          amount: 45_000,  date: .now, category: .health),
+        Transaction(type: .expense, title: "Vitamin",            amount: 80_000,  date: .now, category: .health),
+
+        // Other
+        Transaction(type: .expense, title: "Bayar listrik",      amount: 200_000, date: .now, category: .other),
+        Transaction(type: .expense, title: "Iuran kebersihan",   amount: 30_000,  date: .now, category: .other),
     ]
 }

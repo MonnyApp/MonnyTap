@@ -28,7 +28,7 @@ struct OverviewView: View {
                                 .fontWeight(.bold)
                             AnalyticsChartView(viewModel: vm)
                                 .frame(maxWidth: .infinity)
-                                .padding(20)
+                                .padding(60)
                         }
                         .padding(.vertical, 16)
                         RecentTransactionsSection(vm: vm)
