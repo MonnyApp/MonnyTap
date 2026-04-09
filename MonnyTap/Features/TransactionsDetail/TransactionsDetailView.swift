@@ -153,7 +153,7 @@ struct TransactionsDetailView: View {
             .background(Color.white)
             .clipShape(Capsule())
             .padding(.horizontal)
-            .shadow(radius: 3)
+            .shadow(radius: 1)
     }
 }
 
