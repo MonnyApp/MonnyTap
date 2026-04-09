@@ -146,63 +146,6 @@ private struct RecentTransactionsSection: View {
     }
 }
 
-private struct TransactionRow: View {
-    var transaction: Transaction
-    var vm: OverviewViewModel
-
-    var body: some View {
-        HStack(spacing: 12) {
-
-            // Ikon kategori dalam lingkaran
-            ZStack {
-                Circle()
-                    .fill(
-                        (transaction.category?.tempColor ?? Color("#A0A0A8"))
-                            .opacity(0.18)
-                    )
-                    .frame(width: 50, height: 50)
-                Image(systemName: transaction.category?.icon ?? "questionmark")
-                    // pakai tempColor selama iconColor di Category.swift belum diaktifkan
-                    .foregroundColor(
-                        transaction.category?.tempColor ?? Color("#A0A0A8")
-                    )
-                    .font(.system(size: 18, weight: .medium))
-            }
-
-            // Label kategori
-            Text(transaction.category?.rawValue ?? "Other")
-                .font(.caption2)
-                .foregroundColor(.secondary)
-                .frame(width: 52)
-                .multilineTextAlignment(.center)
-
-            Spacer()
-
-            // Nama transaksi + nominal
-            VStack(alignment: .trailing, spacing: 3) {
-                Text(transaction.title)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.trailing)
-                Text(vm.formatRupiah(transaction.amount))
-                    .font(.callout)
-                    .fontWeight(.bold)
-                    .foregroundColor(
-                        transaction.type == .income
-                        ? Color("#1D9E75")
-                        : Color("#E24B4A")
-                    )
-            }
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(Color(.systemBackground))
-        .cornerRadius(14)
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 1)
-    }
-}
-
-
 // MARK: - FAB Button
 
 private struct AddTransactionFAB: View {
