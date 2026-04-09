@@ -125,6 +125,16 @@ private struct RecentTransactionsSection: View {
     @Bindable var vm: OverviewViewModel
 
     var body: some View {
+        
+        // hapus
+        let dummy = Transaction(
+            type: .expense,
+            title: "Ayam Geprek Wani",
+            amount: 13_000,
+            date: .now,
+            category: .fnb
+        )
+
         VStack(alignment: .leading, spacing: 12) {
 
             HStack {
@@ -136,7 +146,7 @@ private struct RecentTransactionsSection: View {
             }
 
             ForEach(vm.transactions.prefix(5)) { t in
-                TransactionCard()
+                TransactionCard(transaction: dummy)
             }
         }
     }
