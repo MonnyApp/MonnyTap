@@ -20,6 +20,7 @@ enum Category: String, CaseIterable, Identifiable, Codable {
     case travels = "Travels"
     case transportation = "Transportation"
     case other = "Other"
+    case income = "Income"
     
     /// ID unik yang dibutuhkan oleh protokol `Identifiable`, menggunakan nilai String bawaan (rawValue).
     var id: String {
@@ -38,6 +39,7 @@ enum Category: String, CaseIterable, Identifiable, Codable {
         case .travels: return "figure.walk"
         case .transportation: return "car.fill"
         case .other: return "lightbulb.fill"
+        case .income: return "dollarsign"
         }
     }
     
@@ -53,6 +55,7 @@ enum Category: String, CaseIterable, Identifiable, Codable {
         case .travels:         return Color("Chocomonny")
         case .transportation: return Color("toscamonny")
         case .other:         return Color("greymonny")
+        case .income:         return Color("greenmonny")
         }
     }
     
@@ -68,6 +71,7 @@ enum Category: String, CaseIterable, Identifiable, Codable {
         case .travels:         return Color("chocoicon")
         case .transportation: return Color("toscaicon")
         case .other:         return Color("greyicon")
+        case .income:         return Color("greenincome")
         }
     }
 }
