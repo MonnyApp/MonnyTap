@@ -42,9 +42,8 @@ struct TransactionCard: View {
             .padding(.horizontal, 25)
             .padding(.vertical, 5)
             .background(Color(.systemBackground))
-            .cornerRadius(50)
+            .cornerRadius(16)
             .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
-            .padding(.horizontal)
         }
         .buttonStyle(PlainButtonStyle())
     }
