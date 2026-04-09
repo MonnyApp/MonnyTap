@@ -8,11 +8,41 @@
 import Foundation
 import SwiftData
 
+/// Representasi model data untuk setiap transaksi yang dicatat oleh pengguna.
+/// Model ini menggunakan SwiftData untuk penyimpanan lokal.
 @Model
 final class Transaction {
-    var timestamp: Date
+    /// ID unik untuk setiap transaksi.
+    var id: UUID
+    /// Jenis transaksi, apakah itu pemasukan (Income) atau pengeluaran (Expense).
+    var type: TransactionType
+    /// Nama atau deskripsi singkat dari transaksi yang diinput pengguna.
+    var title: String
+    /// Nominal transaksi dalam satuan angka bulat (Integer).
+    var amount: Int
+    /// Waktu dan tanggal transaksi dicatat.
+    var date: Date
+    /// Kategori transaksi. Jika pengguna tidak memilih, sistem akan otomatis menetapkan `.other`.
+    var category: Category?
     
-    init(timestamp: Date) {
-        self.timestamp = timestamp
+    init(
+        id: UUID = UUID(),
+        type: TransactionType,
+        title: String,
+        amount: Int,
+        date: Date = .now,
+        category: Category = .other //default nya jadi kategori other
+    )
+    {
+        self.id = id
+        self.type = type
+        self.title = title
+        self.amount = amount
+        self.date = date
+        self.category = category
     }
+}
+enum TransactionType: String, Codable {
+    case expense = "Expense"
+    case income = "Income"
 }
