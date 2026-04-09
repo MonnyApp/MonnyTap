@@ -7,23 +7,24 @@
 
 import SwiftUI
 
+/// Layar modal yang memungkinkan pengguna memilih kategori untuk sebuah transaksi.
 struct ModalCategoryExpenseView: View {
-    // Selected category passed from parent (e.g., a transaction form)
+    /// Kategori yang saat ini dipilih, diikat (binding) dari parent view (misal: form tambah transaksi).
     @Binding var selectedCategory: Category?
-    // Optional callback when user taps Save
+    /// Callback opsional yang dieksekusi saat pengguna menekan tombol simpan.
     var onSave: ((Category?) -> Void)?
     
     @State private var viewModel = ModalCategoryExpenseViewModel()
-
+    
     @Environment(\.dismiss) private var dismiss
-
-    // Define the 3-column grid layout
+    
+    // Konfigurasi grid dengan 3 kolom yang ukurannya fleksibel membagi lebar layar.
     private let columns = [
         GridItem(.flexible()),
         GridItem(.flexible()),
         GridItem(.flexible())
     ]
-
+    
     var body: some View {
         VStack(spacing: 0) {
             // Header
@@ -37,6 +38,7 @@ struct ModalCategoryExpenseView: View {
                             isSelected: viewModel.isSelected(category)
                         )
                         .onTapGesture {
+                            // Memperbarui pilihan sementara di ViewModel saat cell ditekan.
                             viewModel.select(category)
                         }
                     }
@@ -45,12 +47,18 @@ struct ModalCategoryExpenseView: View {
             }
         }
         .onAppear {
-            viewModel.tempSelection = selectedCategory
+            // Saat modal muncul, pastikan tempSelection terisi.
+            // Gunakan kategori yang sudah ada, atau paksa ke '.other' jika ini transaksi baru.
+            viewModel.tempSelection = selectedCategory ?? .other
         }
     }
-
+    
+    // MARK: - Subviews
+    
+    /// Tampilan header bagian atas yang berisi tombol tutup, judul, dan tombol konfirmasi.
     private var headerView: some View {
         HStack {
+            // Tombol Batal / Tutup
             Button(action: { dismiss() }) {
                 Image(systemName: "xmark")
                     .font(.headline)
@@ -58,20 +66,20 @@ struct ModalCategoryExpenseView: View {
                     .background(Color(.systemGray6))
                     .clipShape(Circle())
             }
-
             Spacer()
-
             Text("Choose Category")
                 .font(.headline)
-
             Spacer()
-
+            // Tombol Simpan
             Button(action: {
+                // Terapkan pilihan sementara ke variabel binding
                 let newValue = viewModel.confirmSelection(currentSelection: selectedCategory)
                 selectedCategory = newValue
+                // Beri tahu parent view bahwa proses penyimpanan terjadi
                 onSave?(newValue)
                 dismiss()
-            }) {
+            })
+            {
                 Image(systemName: "checkmark")
                     .font(.headline)
                     .foregroundColor(.white)
@@ -84,34 +92,46 @@ struct ModalCategoryExpenseView: View {
     }
 }
 
-struct CategoryCell: View {
-    let category: Category
-    let isSelected: Bool
+// MARK: - Komponen UI Tambahan
 
+/// Tampilan individual untuk setiap ikon kategori di dalam grid layar pemilihan kategori.
+struct CategoryCell: View {
+    /// Data kategori yang direpresentasikan oleh cell ini.
+    let category: Category
+    /// Menentukan apakah cell ini sedang dipilih untuk menampilkan efek visual aktif.
+    let isSelected: Bool
+    
     var body: some View {
         VStack(spacing: 12) {
             ZStack {
                 Circle()
                     .fill(category.color.opacity(0.6))
                     .frame(width: 80, height: 80)
-
+                
                 Image(systemName: category.icon)
                     .font(.system(size: 30, weight: .bold))
                     .foregroundColor(category.iconColor)
             }
-
+            
             Text(category.rawValue)
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(.primary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
+        // Berikan latar belakang biru tipis jika dipilih, atau abu-abu transparan jika tidak
         .background(isSelected ? Color.blue.opacity(0.1) : Color(.systemGray6).opacity(0.3))
         .cornerRadius(20)
         .overlay(
+            // Tambahkan garis tepi biru jika dipilih
             RoundedRectangle(cornerRadius: 20)
                 .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 2)
         )
+        // Aksesibilitas: Menggabungkan gambar dan teks agar VoiceOver membacanya sebagai satu tombol utuh
+        .accessibilityElement(children: .combine) // Mengelompokkan gambar dan teks menjadi satu
+        .accessibilityAddTraits(.isButton)        // Memberitahu VoiceOver "This is a button you can tap"
+        .accessibilityLabel(category.rawValue)    // Memberitahu VoiceOver untuk membaca "FnB" atau "Health"
+        
     }
 }
 
