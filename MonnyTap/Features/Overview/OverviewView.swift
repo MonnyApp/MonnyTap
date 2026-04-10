@@ -38,10 +38,13 @@ struct OverviewView: View {
                     .padding(.top, 16)
                     .background(
                         GeometryReader { geo in
-                            // gambarnya shannon nanti taruh sini
+                            let minY = geo.frame(in: .global).minY
+                            let safeMinY = minY.isFinite ? minY : 0
+                            let height = max(0, safeMinY + 130)
+                            //gambar shannon disini
                             Color("bluemonny")
-                                .frame(height: geo.frame(in: .global).minY + 130)
-                                .offset(y: -geo.frame(in: .global).minY)
+                                .frame(height: height)
+                                .offset(y: -safeMinY)
                         }
                     )
                 }
