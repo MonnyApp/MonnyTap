@@ -11,20 +11,14 @@ import SwiftData
 struct TransactionsDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    
+
     let transaction: Transaction
-    
+
     @State private var showEditSheet = false
     @State private var showDeleteAlert = false
-    
-    @State private var editType: TransactionType = .expense
-    @State private var editAmount: String = ""
-    @State private var editCategory: Category? = nil
-    @State private var editDate: Date = .now
-    @State private var editTitle: String = ""
-    
+
     @FocusState private var isAmountFocused: Bool
-    
+
     var body: some View {
         ZStack {
             Color(.systemBackground)
@@ -77,73 +71,7 @@ struct TransactionsDetailView: View {
             Text("Are you sure you want to delete \"\(transaction.title)\" Transactions?.")
         }
         .sheet(isPresented: $showEditSheet) {
-            NavigationStack {
-                ZStack {
-                    Color(.systemBackground).ignoresSafeArea()
-
-                    ScrollView {
-                        VStack(spacing: 24) {
-
-                            InputTransactionCard(
-                                mode: .edit,
-                                transactionType: $editType,
-                                amount: $editAmount,
-                                selectedCategory: $editCategory,
-                                date: $editDate,
-                                title: $editTitle,
-                                isAmountFocused: $isAmountFocused
-                            )
-                        }
-                        .padding(.vertical)
-                    }
-                }
-                .onAppear {
-                    editType = transaction.type
-                    editAmount = String(transaction.amount)
-                    editCategory = transaction.category
-                    editDate = transaction.date
-                    editTitle = transaction.title
-                }
-                .navigationTitle("Edit Transaction")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button { showEditSheet = false } label: {
-                            Image(systemName: "xmark")
-                                .font(.system(size: 14, weight: .bold))
-                                .foregroundColor(.primary)
-                                .frame(width: 30, height: 30)
-                                .background(Color(.systemGray5))
-                                .clipShape(Circle())
-                        }
-                    }
-                    
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            transaction.type = editType
-                            transaction.amount = Int(editAmount) ?? transaction.amount
-                            if editType == .income {
-                                transaction.category = .income
-                            } else {
-                                let resolvedCategory = editCategory ?? .other
-                                transaction.category = resolvedCategory == .income ? .other : resolvedCategory
-                            }
-                            transaction.date = editDate
-                            transaction.title = editTitle
-                            showEditSheet = false
-                        } label: {
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 14, weight: .bold))
-                                .foregroundColor(.white)
-                                .frame(width: 30, height: 30)
-                                .background(Color.blue)
-                                .clipShape(Circle())
-                        }
-                        .disabled(editAmount.isEmpty || editTitle.isEmpty)
-                        .opacity((editAmount.isEmpty || editTitle.isEmpty) ? 0.5 : 1.0)
-                    }
-                }
-            }
+            EditTransactionSheet(transaction: transaction)
         }
     }
     
