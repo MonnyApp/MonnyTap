@@ -33,7 +33,7 @@ struct AllTransactionCard: View {
                         .fill(displayCategory.color.opacity(0.15))
                         .frame(width: 48, height: 48)
                     
-                    Image(systemName: displayCategory.icon ?? "questionmark")
+                    Image(systemName: displayCategory.icon)
                         .foregroundColor(displayCategory.color)
                         .font(.system(size: 20, weight: .bold))
                 }

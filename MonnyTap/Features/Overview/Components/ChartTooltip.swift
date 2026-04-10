@@ -7,13 +7,21 @@
 
 import SwiftUI
 
+enum TooltipCorner {
+    case topLeading, topTrailing, bottomLeading, bottomTrailing
+}
+
 struct ChartTooltip: View {
     let categoryName: String
     let value: String
-    let isLeftSide: Bool
+    let sharpCorner: TooltipCorner
 
     private let sharpRadius: CGFloat = 4
     private let smoothRadius: CGFloat = 16
+
+    private func radius(for corner: TooltipCorner) -> CGFloat {
+        corner == sharpCorner ? sharpRadius : smoothRadius
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
@@ -28,10 +36,10 @@ struct ChartTooltip: View {
         .padding(.vertical, 10)
         .background(
             UnevenRoundedRectangle(
-                topLeadingRadius: isLeftSide ? sharpRadius : smoothRadius,
-                bottomLeadingRadius: isLeftSide ? sharpRadius : smoothRadius,
-                bottomTrailingRadius: isLeftSide ? smoothRadius : sharpRadius,
-                topTrailingRadius: isLeftSide ? smoothRadius : sharpRadius
+                topLeadingRadius: radius(for: .topLeading),
+                bottomLeadingRadius: radius(for: .bottomLeading),
+                bottomTrailingRadius: radius(for: .bottomTrailing),
+                topTrailingRadius: radius(for: .topTrailing)
             )
             .fill(.ultraThinMaterial)
             .shadow(color: .black.opacity(0.08), radius: 8, y: 2)
@@ -43,6 +51,6 @@ struct ChartTooltip: View {
     ChartTooltip(
         categoryName: "Other",
         value: "Rp. 50.000",
-        isLeftSide: false
+        sharpCorner: .topTrailing
     )
 }

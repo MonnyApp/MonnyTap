@@ -65,19 +65,28 @@ struct DonutChartView: View {
                 }
 
                 if let selected = selectedPoint {
-                    let mid = ((selected.startAngle + selected.endAngle) / 2) * 360 - 90
-                    let rad = mid * .pi / 180
+                    // 0° = top, 90° = right, 180° = bottom, 270° = left
+                    let displayAngle = ((selected.startAngle + selected.endAngle) / 2) * 360
+                    let positionRad = (displayAngle - 90) * .pi / 180
                     let tooltipRadius = radius * 0.45
-                    let isLeftSide = mid > 0 && mid < 180
+
+                    let sharpCorner: TooltipCorner = {
+                        switch displayAngle {
+                        case ..<90:  return .topTrailing
+                        case ..<180: return .bottomTrailing
+                        case ..<270: return .bottomLeading
+                        default:     return .topLeading
+                        }
+                    }()
 
                     ChartTooltip(
                         categoryName: selected.category.rawValue,
                         value: "Rp. \(Int(selected.amount).formatted())",
-                        isLeftSide: !isLeftSide
+                        sharpCorner: sharpCorner
                     )
                     .position(
-                        x: center.x + tooltipRadius * cos(rad),
-                        y: center.y + tooltipRadius * sin(rad)
+                        x: center.x + tooltipRadius * cos(positionRad),
+                        y: center.y + tooltipRadius * sin(positionRad)
                     )
                     .transition(.scale.combined(with: .opacity))
                 }
