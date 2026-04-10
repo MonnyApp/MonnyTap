@@ -125,7 +125,8 @@ struct TransactionsDetailView: View {
                             if editType == .income {
                                 transaction.category = .income
                             } else {
-                                transaction.category = editCategory ?? .other
+                                let resolvedCategory = editCategory ?? .other
+                                transaction.category = resolvedCategory == .income ? .other : resolvedCategory
                             }
                             transaction.date = editDate
                             transaction.title = editTitle
