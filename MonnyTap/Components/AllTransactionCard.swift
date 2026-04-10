@@ -4,13 +4,18 @@
 //
 //  Created by Fikrah Damar Huda on 07/04/26.
 //
-
 import SwiftData
 import SwiftUI
 
 struct AllTransactionCard: View {
-    /// Kita menerima objek Transaction utuh dari model
     let transaction: Transaction
+
+    private var displayCategory: Category {
+        if transaction.type == .income {
+            return .income
+        }
+        return transaction.category ?? .other
+    }
 
     private static let currencyFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
@@ -21,55 +26,54 @@ struct AllTransactionCard: View {
     
     var body: some View {
         NavigationLink(destination: TransactionsDetailView(transaction: transaction)) {
-            HStack(spacing: 12) {
-                // Sisi Kiri: Ikon Kategori dari Enum
-                VStack(spacing: 4) {
-                    ZStack {
-                        Circle()
-                            .fill(transaction.type.iconBackgroundColor)
-                            .frame(width: 40, height: 40)
-                        
-                        Image(systemName: transaction.category?.icon ?? "questionmark")
-                            .foregroundColor(transaction.type.iconColor)
-                            .font(.system(size: 16))
-                    }
+            HStack(spacing: 16) {
+                // 1. Ikon Kategori (Dikecilkan agar proporsional)
+                ZStack {
+                    Circle()
+                        .fill(displayCategory.color.opacity(0.15))
+                        .frame(width: 48, height: 48)
                     
-                    Text(transaction.category?.rawValue ?? "Other")
-                        .font(.system(size: 10, weight: .medium))
-                        .foregroundColor(.secondary)
+                    Image(systemName: displayCategory.icon ?? "questionmark")
+                        .foregroundColor(displayCategory.color)
+                        .font(.system(size: 20, weight: .bold))
                 }
-                
-                // Sisi Tengah: Judul & Nominal
-                VStack(alignment: .leading, spacing: 2) {
+
+                // 2. Judul & Nominal
+                VStack(alignment: .leading, spacing: 4) {
                     Text(transaction.title)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+
+                    Text(displayCategory.rawValue)
                         .font(.system(size: 12))
                         .foregroundColor(.secondary)
-                    
-                    Text("Rp \(formatAmount(transaction.amount))")
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundColor(transaction.type.amountColor)
                 }
-                
+
                 Spacer()
-                
-                // Sisi Kanan: Button Chevron (Hanya Visual)
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(.gray)
-                    .padding(8)
-                    .background(Circle().fill(Color.gray.opacity(0.1)))
+
+                // 3. Nominal Uang (Ukuran font dikecilkan agar elegan)
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text("Rp \(formatAmount(transaction.amount))")
+                        .font(.system(size: 17, weight: .bold))
+                        .foregroundColor(transaction.type.amountColor)
+                    
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(.gray.opacity(0.5))
+                }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 14)
             .background(
-                Capsule()
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
                     .fill(Color.white)
-                    .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 5)
+                    .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 4)
             )
         }
+        .buttonStyle(.plain)
     }
     
-    /// Fungsi pembantu format rupiah
     private func formatAmount(_ value: Int) -> String {
         Self.currencyFormatter.string(from: NSNumber(value: value)) ?? "0"
     }
@@ -77,9 +81,12 @@ struct AllTransactionCard: View {
 
 #Preview {
     NavigationStack {
-        AllTransactionCard(transaction: .sampleIncome)
-            .padding()
-            .background(Color.gray.opacity(0.1)) // Agar capsule putih terlihat jelas
-            .modelContainer(for: Transaction.self, inMemory: true)
+        VStack {
+            AllTransactionCard(transaction: .sampleIncome)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(white: 0.97))
+        .modelContainer(for: Transaction.self, inMemory: true)
     }
 }
