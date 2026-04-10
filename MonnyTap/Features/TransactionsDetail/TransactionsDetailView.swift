@@ -11,12 +11,12 @@ import SwiftData
 struct TransactionsDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-
+    
     let transaction: Transaction
-
+    
     @State private var showEditSheet = false
     @State private var showDeleteAlert = false
-
+    
     @State private var editType: TransactionType = .expense
     @State private var editAmount: String = ""
     @State private var editCategory: Category? = nil
@@ -24,12 +24,12 @@ struct TransactionsDetailView: View {
     @State private var editTitle: String = ""
     
     @FocusState private var isAmountFocused: Bool
-
+    
     var body: some View {
         ZStack {
             Color(.systemBackground)
                 .ignoresSafeArea()
-
+            
             ScrollView {
                 VStack(spacing: 24) {
                     typeIndicator
@@ -61,7 +61,7 @@ struct TransactionsDetailView: View {
                     } label: {
                         Label("Edit", systemImage: "pencil")
                     }
-
+                    
                     Button(role: .destructive) {
                         showDeleteAlert = true
                     } label: {
@@ -85,10 +85,10 @@ struct TransactionsDetailView: View {
             NavigationStack {
                 ZStack {
                     Color(.systemBackground).ignoresSafeArea()
-
+                    
                     ScrollView {
                         VStack(spacing: 24) {
-
+                            
                             InputTransactionCard(
                                 mode: .edit,
                                 transactionType: $editType,
@@ -115,12 +115,20 @@ struct TransactionsDetailView: View {
                                 .clipShape(Circle())
                         }
                     }
-
+                    
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
+                            
                             transaction.type = editType
                             transaction.amount = Int(editAmount) ?? transaction.amount
-                            transaction.category = editCategory
+                            
+                            if editType == .income {
+                                transaction.category = .income
+                            } else {
+                                transaction.category = editCategory ?? .other
+                            }
+                            transaction.type = editType
+                            transaction.amount = Int(editAmount) ?? transaction.amount
                             transaction.date = editDate
                             transaction.title = editTitle
                             showEditSheet = false
@@ -139,9 +147,9 @@ struct TransactionsDetailView: View {
             }
         }
     }
-
+    
     // MARK: - Subviews
-
+    
     private var typeIndicator: some View {
         Text(transaction.type.rawValue)
             .font(.subheadline)
