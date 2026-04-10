@@ -29,10 +29,14 @@ struct InputTransactionCard: View {
     var isAmountFocused: FocusState<Bool>.Binding
 
     var body: some View {
+        // 1. Segmented control sekarang ada di dalam komponen Card
+        transactionTypePickerView
+        
         VStack(spacing: 16) {
+            
+            
             amountInputView
 
-            // Only show category if it's an expense
             if transactionType == .expense {
                 categoryRowView
             }
@@ -44,10 +48,32 @@ struct InputTransactionCard: View {
         .background(Color(.systemGray6))
         .cornerRadius(24)
         .padding(.horizontal)
-
+        // 2. Logika brilian Anda diterapkan di sini!
+        .onAppear {
+            if mode == .input {
+                // Jika sedang tambah data baru, selalu mulai dari Expense
+                transactionType = .expense
+            }
+            // Jika mode == .edit atau .detail, kode ini diabaikan
+            // sehingga Segmented Control akan otomatis menyesuaikan dengan data aslinya!
+        }
     }
 
     // MARK: - Subviews
+    
+    @ViewBuilder
+    private var transactionTypePickerView: some View {
+        if isEditable {
+            Picker("Transaction Type", selection: $transactionType) {
+                Text("Expense").tag(TransactionType.expense)
+                Text("Income").tag(TransactionType.income)
+            }
+            .pickerStyle(.segmented)
+            .padding(.bottom, 8)
+        } else {
+           
+        }
+    }
 
     private var amountInputView: some View {
         VStack(alignment: .leading) {

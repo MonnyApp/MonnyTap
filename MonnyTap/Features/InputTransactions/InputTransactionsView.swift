@@ -12,16 +12,17 @@ struct InputTransactionsView: View {
     // MARK: - Environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    
     // MARK: - State Variables
+    // (Tidak masalah diisi default apa saja di sini, karena akan dioverride oleh Card saat onAppear)
     @State private var transactionType: TransactionType = .expense
     @State private var amount: String = ""
-    @State private var selectedCategory: Category? = .other // Default is .other
+    @State private var selectedCategory: Category? = .other
     @State private var date: Date = .now
     @State private var title: String = ""
-    // MARK: - Focus state
+    
     @FocusState private var isAmountFocused: Bool
     
-    // MARK: - Main Body
     var body: some View {
         NavigationStack {
             ZStack {
@@ -31,12 +32,9 @@ struct InputTransactionsView: View {
                 ScrollView {
                     VStack(spacing: 24) {
                         
-                        // 1. The Segmented Control
-                        transactionTypePicker
-                        
-                        // 2. The Reusable Card Component
-                        // We pass our @State variables down using the '$' prefix to create Bindings
+                        // Cukup panggil Card-nya saja. Segmented Control otomatis muncul di dalamnya!
                         InputTransactionCard(
+                            mode: .input, // <-- Pastikan mode diset ke input saat menambah data
                             transactionType: $transactionType,
                             amount: $amount,
                             selectedCategory: $selectedCategory,

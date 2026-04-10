@@ -88,12 +88,6 @@ struct TransactionsDetailView: View {
 
                     ScrollView {
                         VStack(spacing: 24) {
-                            Picker("Transaction Type", selection: $editType) {
-                                Text("Expense").tag(TransactionType.expense)
-                                Text("Income").tag(TransactionType.income)
-                            }
-                            .pickerStyle(.segmented)
-                            .padding(.horizontal)
 
                             InputTransactionCard(
                                 mode: .edit,
