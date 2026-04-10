@@ -57,6 +57,13 @@ struct InputTransactionCard: View {
             // Jika mode == .edit atau .detail, kode ini diabaikan
             // sehingga Segmented Control akan otomatis menyesuaikan dengan data aslinya!
         }
+        .onChange(of: transactionType) { _, newValue in
+            // Kalau user pindah dari Income ke Expense, kategori .income tidak
+            // valid untuk Expense — reset supaya user memilih kategori yang benar.
+            if newValue == .expense && selectedCategory == .income {
+                selectedCategory = nil
+            }
+        }
     }
 
     // MARK: - Subviews
