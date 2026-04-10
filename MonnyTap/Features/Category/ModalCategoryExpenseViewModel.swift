@@ -18,7 +18,7 @@ import Foundation
 @Observable
 final class ModalCategoryExpenseViewModel {
     /// Daftar seluruh kategori yang tersedia untuk ditampilkan di UI.
-    var categories: [Category] = Category.allCases
+    var categories: [Category] = Category.allCases.filter { $0 != .income }
     
     /// Menyimpan pilihan kategori pengguna secara sementara sebelum tombol simpan ditekan.
     var tempSelection: Category?

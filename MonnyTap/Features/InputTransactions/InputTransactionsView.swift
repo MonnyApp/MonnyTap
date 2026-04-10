@@ -62,15 +62,6 @@ struct InputTransactionsView: View {
     
     // MARK: - Subviews (UI Components)
     
-    private var transactionTypePicker: some View {
-        Picker("Transaction Type", selection: $transactionType) {
-            Text("Expense").tag(TransactionType.expense)
-            Text("Income").tag(TransactionType.income)
-        }
-        .pickerStyle(.segmented)
-        .padding(.horizontal)
-    }
-    
     @ToolbarContentBuilder
     private var navigationToolbar: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
@@ -100,12 +91,23 @@ struct InputTransactionsView: View {
     
     private func saveTransaction() {
         let amountInt = Int(amount) ?? 0
+        
+        var finalCategory: Category
+        if transactionType == .income {
+            print("DEBUG: Masuk ke blok INCOME") // <--- Tambahkan ini
+            finalCategory = .income
+        } else {
+            print("DEBUG: Masuk ke blok ELSE (Expense)") // <--- Tambahkan ini
+            finalCategory = selectedCategory ?? .other
+        }
+        
+        print("DEBUG: Kategori final yang disimpan adalah: \(finalCategory)")
         let newTransaction = Transaction(
             type: transactionType,
             title: title,
             amount: amountInt,
             date: date,
-            category: selectedCategory ?? .other
+            category: finalCategory
         )
         
         modelContext.insert(newTransaction)
