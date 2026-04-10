@@ -21,6 +21,7 @@ enum Category: String, CaseIterable, Identifiable, Codable {
     case transportation = "Transportation"
     case other = "Other"
     case income = "Income"
+
     
     /// ID unik yang dibutuhkan oleh protokol `Identifiable`, menggunakan nilai String bawaan (rawValue).
     var id: String {
