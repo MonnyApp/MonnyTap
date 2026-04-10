@@ -52,11 +52,6 @@ struct TransactionsDetailView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Button {
-                        editType = transaction.type
-                        editAmount = String(transaction.amount)
-                        editCategory = transaction.category
-                        editDate = transaction.date
-                        editTitle = transaction.title
                         showEditSheet = true
                     } label: {
                         Label("Edit", systemImage: "pencil")
@@ -85,10 +80,10 @@ struct TransactionsDetailView: View {
             NavigationStack {
                 ZStack {
                     Color(.systemBackground).ignoresSafeArea()
-                    
+
                     ScrollView {
                         VStack(spacing: 24) {
-                            
+
                             InputTransactionCard(
                                 mode: .edit,
                                 transactionType: $editType,
@@ -101,6 +96,13 @@ struct TransactionsDetailView: View {
                         }
                         .padding(.vertical)
                     }
+                }
+                .onAppear {
+                    editType = transaction.type
+                    editAmount = String(transaction.amount)
+                    editCategory = transaction.category
+                    editDate = transaction.date
+                    editTitle = transaction.title
                 }
                 .navigationTitle("Edit Transaction")
                 .navigationBarTitleDisplayMode(.inline)
@@ -118,17 +120,13 @@ struct TransactionsDetailView: View {
                     
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
-                            
                             transaction.type = editType
                             transaction.amount = Int(editAmount) ?? transaction.amount
-                            
                             if editType == .income {
                                 transaction.category = .income
                             } else {
                                 transaction.category = editCategory ?? .other
                             }
-                            transaction.type = editType
-                            transaction.amount = Int(editAmount) ?? transaction.amount
                             transaction.date = editDate
                             transaction.title = editTitle
                             showEditSheet = false
