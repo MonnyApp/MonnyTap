@@ -60,16 +60,16 @@ enum TransactionType: String, Codable {
     var iconColor: Color {
         switch self {
         case .income:
-            return .green
+            return Color("greenincome")
         case .expense:
-            return .orange
+            return Color("redicon")
         }
     }
 
     var amountColor: Color {
         switch self {
         case .income:
-            return Color(red: 0 / 255, green: 180 / 255, blue: 130 / 255)
+            return Color("greenincome")
         case .expense:
             return Color("redicon")
         }

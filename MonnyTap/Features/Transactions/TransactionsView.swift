@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 // tampilan slide
 struct DateItem: View {
@@ -40,11 +41,15 @@ struct DateItem: View {
 }
 
 struct TransactionsView: View {
-    private let transactions = MockData.transactions
+    @Query(sort: \Transaction.date, order: .reverse) private var transactions: [Transaction]
 
     // Tanggal aktif selalu menjadi item tengah pada date picker.
-    @State private var selectedDate = Calendar.current.startOfDay(for: .now)
+    @State private var selectedDate: Date
     @State private var isDatePickerPresented = false
+
+    init(selectedDate: Date = Calendar.current.startOfDay(for: .now)) {
+        _selectedDate = State(initialValue: Calendar.current.startOfDay(for: selectedDate))
+    }
 
     private var visibleDates: [Date] {
         (-2...2).compactMap {
@@ -160,8 +165,25 @@ struct TransactionsView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        TransactionsView()
+private struct TransactionsViewPreview: View {
+    @Environment(\.modelContext) private var modelContext
+    @Query private var transactions: [Transaction]
+
+    var body: some View {
+        NavigationStack {
+            TransactionsView(selectedDate: MockData.transactions.first?.date ?? .now)
+        }
+        .onAppear {
+            if transactions.isEmpty {
+                for transaction in MockData.transactions {
+                    modelContext.insert(transaction)
+                }
+            }
+        }
     }
+}
+
+#Preview {
+    TransactionsViewPreview()
+        .modelContainer(for: Transaction.self, inMemory: true)
 }
