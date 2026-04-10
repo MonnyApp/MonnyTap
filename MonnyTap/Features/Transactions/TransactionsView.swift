@@ -40,7 +40,7 @@ struct DateItem: View {
 }
 
 struct TransactionsView: View {
-    private let transactions: [Transaction] = [.sampleIncome]
+    private let transactions = MockData.transactions
 
     // Tanggal aktif selalu menjadi item tengah pada date picker.
     @State private var selectedDate = Calendar.current.startOfDay(for: .now)
@@ -49,6 +49,12 @@ struct TransactionsView: View {
     private var visibleDates: [Date] {
         (-2...2).compactMap {
             Calendar.current.date(byAdding: .day, value: $0, to: selectedDate)
+        }
+    }
+
+    private var filteredTransactions: [Transaction] {
+        transactions.filter { transaction in
+            Calendar.current.isDate(transaction.date, inSameDayAs: selectedDate)
         }
     }
 
@@ -99,12 +105,12 @@ struct TransactionsView: View {
             // TRANSACTION LIST
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 15) {
-                    if transactions.isEmpty {
+                    if filteredTransactions.isEmpty {
                         Text("No Transactions")
                             .foregroundColor(.gray)
                             .padding(.top, 50)
                     } else {
-                        ForEach(transactions) { transaction in
+                        ForEach(filteredTransactions) { transaction in
                             AllTransactionCard(transaction: transaction)
                         }
                     }
