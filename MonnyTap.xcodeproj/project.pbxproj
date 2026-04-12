@@ -56,6 +56,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Data/Category.swift,
+				Data/SharedModelContainer.swift,
 				Data/Transaction.swift,
 			);
 			target = 060409592F8BC62900FD01F8 /* MonnyTapWidgetExtension */;
