@@ -41,9 +41,10 @@ struct MainWidgetView: View {
             .clipShape(Capsule())
             .overlay(Capsule().stroke(Color.secondary.opacity(0.3), lineWidth: 1))
 
-            // MARK: - Category Row
-            HStack {
-                ForEach(entry.topCategories) { category in
+            // MARK: - Category Row (hidden for income)
+            if entry.type == .expense {
+                HStack {
+                    ForEach(entry.topCategories) { category in
                     Button(intent: SelectCategoryIntent(categoryRaw: category.rawValue)) {
                         VStack(spacing: 4) {
                             ZStack {
@@ -86,6 +87,7 @@ struct MainWidgetView: View {
                     .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.plain)
+            }
             }
 
             // MARK: - Amount Display
