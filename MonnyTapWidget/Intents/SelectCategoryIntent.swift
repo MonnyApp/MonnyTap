@@ -24,7 +24,6 @@ struct SelectCategoryIntent: AppIntent {
         if let category = Category(rawValue: categoryRaw) {
             WidgetDraftState.selectedCategory = category
         }
-        WidgetDraftState.currentView = "main"
         WidgetCenter.shared.reloadTimelines(ofKind: "MonnyTapWidget")
         return .result()
     }

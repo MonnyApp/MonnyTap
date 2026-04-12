@@ -47,13 +47,19 @@ struct MainWidgetView: View {
                     Button(intent: SelectCategoryIntent(categoryRaw: category.rawValue)) {
                         VStack(spacing: 4) {
                             ZStack {
-                                Circle()
-                                    .fill(category.color.opacity(0.3))
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(category.color)
                                     .frame(width: 44, height: 44)
                                 Image(systemName: category.icon)
                                     .font(.system(size: 20))
-                                    .foregroundStyle(category.iconColor)
+                                    .foregroundStyle(.white)
                             }
+                            .overlay(
+                                entry.selectedCategory == category
+                                    ? RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.accentColor, lineWidth: 2.5)
+                                    : nil
+                            )
                             Text(category.rawValue)
                                 .font(.caption2)
                                 .lineLimit(1)
@@ -61,19 +67,13 @@ struct MainWidgetView: View {
                         .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.plain)
-                    .overlay(
-                        entry.selectedCategory == category
-                            ? RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.accentColor, lineWidth: 2)
-                            : nil
-                    )
                 }
 
                 Button(intent: ShowCategoryListIntent()) {
                     VStack(spacing: 4) {
                         ZStack {
-                            Circle()
-                                .fill(Color.gray.opacity(0.2))
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.gray.opacity(0.3))
                                 .frame(width: 44, height: 44)
                             Image(systemName: "chevron.right")
                                 .font(.system(size: 18))

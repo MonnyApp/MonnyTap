@@ -61,6 +61,12 @@ struct CategoryListWidgetView: View {
                                     .font(.system(size: 22))
                                     .foregroundStyle(.white)
                             }
+                            .overlay(
+                                entry.selectedCategory == category
+                                    ? RoundedRectangle(cornerRadius: 14)
+                                        .stroke(Color.accentColor, lineWidth: 2.5)
+                                    : nil
+                            )
                             Text(category.rawValue)
                                 .font(.caption2)
                                 .foregroundStyle(.primary)
