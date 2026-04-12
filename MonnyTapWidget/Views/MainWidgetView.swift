@@ -89,12 +89,12 @@ struct MainWidgetView: View {
             }
 
             // MARK: - Amount Display
-            HStack(spacing: 4) {
-                Spacer()
-                Text("Rp")
+            HStack {
+                Text(currencySymbol)
                     .font(.callout)
                     .foregroundStyle(.secondary)
-                Text(formattedAmount)
+                Spacer()
+                Text(formattedNumber)
                     .font(.title)
                     .fontWeight(.bold)
                     .lineLimit(1)
@@ -121,8 +121,8 @@ struct MainWidgetView: View {
                         digitButton("3")
                     }
                     HStack(spacing: 6) {
-                        digitButton("0")
                         digitButton("000")
+                        digitButton("0")
                         acButton
                     }
                 }
@@ -152,18 +152,21 @@ struct MainWidgetView: View {
                 .frame(width: 70)
             }
         }
-        .padding(14)
+        .padding(.vertical, 18)
     }
 
     // MARK: - Helpers
 
-    private var formattedAmount: String {
-        if entry.amountDraft.isEmpty { return "0" }
-        guard let number = Int(entry.amountDraft) else { return entry.amountDraft }
+    private var currencySymbol: String {
         let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.groupingSeparator = "."
-        return formatter.string(from: NSNumber(value: number)) ?? entry.amountDraft
+        formatter.numberStyle = .currency
+        formatter.currencyCode = "IDR"
+        return formatter.currencySymbol ?? "Rp"
+    }
+
+    private var formattedNumber: String {
+        let amount = Int(entry.amountDraft) ?? 0
+        return amount.formatted(.number.locale(Locale(identifier: "id_ID")))
     }
 
     private func digitButton(_ digit: String) -> some View {

@@ -21,39 +21,51 @@ struct CategoryListWidgetView: View {
     }
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 16) {
             // MARK: - Header
             HStack {
-                Text("Select Category")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                Spacer()
                 Button(intent: BackToMainIntent()) {
                     Image(systemName: "xmark")
-                        .font(.subheadline)
+                        .font(.body)
+                        .fontWeight(.medium)
                         .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
+
+                Spacer()
+
+                Text("Select category")
+                    .font(.body)
+                    .fontWeight(.semibold)
+
+                Spacer()
+
+                // Invisible spacer to center title
+                Image(systemName: "xmark")
+                    .font(.body)
+                    .opacity(0)
             }
 
             // MARK: - Category Grid
-            let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 4)
+            let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 4)
 
-            LazyVGrid(columns: columns, spacing: 12) {
+            LazyVGrid(columns: columns, spacing: 16) {
                 ForEach(filteredCategories) { category in
                     Button(intent: SelectCategoryIntent(categoryRaw: category.rawValue)) {
                         VStack(spacing: 6) {
                             ZStack {
-                                Circle()
-                                    .fill(category.color.opacity(0.3))
-                                    .frame(width: 40, height: 40)
+                                RoundedRectangle(cornerRadius: 14)
+                                    .fill(category.color)
+                                    .frame(width: 52, height: 52)
                                 Image(systemName: category.icon)
-                                    .font(.system(size: 18))
-                                    .foregroundStyle(category.iconColor)
+                                    .font(.system(size: 22))
+                                    .foregroundStyle(.white)
                             }
                             Text(category.rawValue)
-                                .font(.system(size: 12))
+                                .font(.caption2)
+                                .foregroundStyle(.primary)
                                 .lineLimit(1)
+                                .minimumScaleFactor(0.8)
                         }
                     }
                     .buttonStyle(.plain)
@@ -62,6 +74,7 @@ struct CategoryListWidgetView: View {
 
             Spacer()
         }
-        .padding(12)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 18)
     }
 }

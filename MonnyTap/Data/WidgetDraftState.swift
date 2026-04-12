@@ -8,7 +8,9 @@
 import Foundation
 
 enum WidgetDraftState {
-    private static let defaults = UserDefaults(suiteName: SharedModelContainer.appGroupID)!
+    private static let defaults: UserDefaults = {
+        UserDefaults(suiteName: SharedModelContainer.appGroupID) ?? .standard
+    }()
 
     static var type: TransactionType {
         get {

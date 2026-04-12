@@ -6,7 +6,6 @@
 //
 
 import WidgetKit
-import SwiftData
 import Foundation
 
 struct MonnyEntry: TimelineEntry {
@@ -19,81 +18,49 @@ struct MonnyEntry: TimelineEntry {
 }
 
 struct MonnyTapWidgetProvider: TimelineProvider {
+    private static let defaultCategories: [Category] = [.fnb, .shopping, .transportation]
+
     func placeholder(in context: Context) -> MonnyEntry {
         MonnyEntry(
             date: .now,
             type: .expense,
             amountDraft: "",
             selectedCategory: nil,
-            topCategories: [.fnb, .shopping, .transportation],
+            topCategories: Self.defaultCategories,
             currentView: "main"
         )
     }
 
     func getSnapshot(in context: Context, completion: @escaping (MonnyEntry) -> Void) {
-        let entry = MonnyEntry(
-            date: .now,
-            type: .expense,
-            amountDraft: "",
-            selectedCategory: nil,
-            topCategories: [.fnb, .shopping, .transportation],
-            currentView: "main"
-        )
-        completion(entry)
+        completion(makeEntry())
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<MonnyEntry>) -> Void) {
-        let type = WidgetDraftState.type
-        let amountDraft = WidgetDraftState.amountDraft
-        let selectedCategory = WidgetDraftState.selectedCategory
-        let currentView = WidgetDraftState.currentView
-
-        let topCategories = fetchTopCategories()
-
-        let entry = MonnyEntry(
-            date: .now,
-            type: type,
-            amountDraft: amountDraft,
-            selectedCategory: selectedCategory,
-            topCategories: topCategories,
-            currentView: currentView
-        )
-
+        let entry = makeEntry()
         let timeline = Timeline(entries: [entry], policy: .never)
         completion(timeline)
     }
 
-    private func fetchTopCategories() -> [Category] {
-        let container = SharedModelContainer.modelContainer
-        let context = ModelContext(container)
+    private func makeEntry() -> MonnyEntry {
+        let defaults = UserDefaults(suiteName: "group.com.MonnyApp.MonnyTap")
 
-        let thirtyDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: .now)!
-        let expenseRaw = TransactionType.expense.rawValue
+        let typeRaw = defaults?.string(forKey: "widgetType") ?? "Expense"
+        let type = TransactionType(rawValue: typeRaw) ?? .expense
 
-        let descriptor = FetchDescriptor<Transaction>(
-            predicate: #Predicate {
-                $0.type.rawValue == expenseRaw && $0.date >= thirtyDaysAgo
-            }
+        let amountDraft = defaults?.string(forKey: "widgetAmountDraft") ?? ""
+
+        let categoryRaw = defaults?.string(forKey: "widgetCategory")
+        let selectedCategory: Category? = categoryRaw.flatMap { Category(rawValue: $0) }
+
+        let currentView = defaults?.string(forKey: "widgetCurrentView") ?? "main"
+
+        return MonnyEntry(
+            date: .now,
+            type: type,
+            amountDraft: amountDraft,
+            selectedCategory: selectedCategory,
+            topCategories: Self.defaultCategories,
+            currentView: currentView
         )
-
-        guard let transactions = try? context.fetch(descriptor) else {
-            return [.fnb, .shopping, .transportation]
-        }
-
-        var totals: [Category: Int] = [:]
-        for transaction in transactions {
-            if let category = transaction.category {
-                totals[category, default: 0] += transaction.amount
-            }
-        }
-
-        let sorted = totals.sorted { $0.value > $1.value }
-        let top = sorted.prefix(3).map(\.key)
-
-        if top.isEmpty {
-            return [.fnb, .shopping, .transportation]
-        }
-
-        return Array(top)
     }
 }
