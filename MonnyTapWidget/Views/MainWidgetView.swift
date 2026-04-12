@@ -14,7 +14,7 @@ struct MainWidgetView: View {
 
     var body: some View {
         VStack(spacing: 6) {
-            // MARK: - Segmented Control
+            // MARK: - Segmented Control 
             HStack(spacing: 8) {
                 Button(intent: SetTypeIntent(typeRaw: "Expense")) {
                     Text("Expense")
