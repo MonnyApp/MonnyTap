@@ -12,6 +12,5 @@ import SwiftUI
 struct MonnyTapWidgetBundle: WidgetBundle {
     var body: some Widget {
         MonnyTapWidget()
-        MonnyTapWidgetControl()
     }
 }

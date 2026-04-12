@@ -21,39 +21,38 @@ struct CategoryListWidgetView: View {
     }
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 12) {
             // MARK: - Header
             HStack {
                 Text("Select Category")
-                    .font(.caption)
+                    .font(.subheadline)
                     .fontWeight(.semibold)
                 Spacer()
                 Button(intent: BackToMainIntent()) {
                     Image(systemName: "xmark")
-                        .font(.caption)
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
             }
-            .padding(.horizontal, 4)
 
             // MARK: - Category Grid
-            let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 4)
+            let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 4)
 
-            LazyVGrid(columns: columns, spacing: 8) {
+            LazyVGrid(columns: columns, spacing: 12) {
                 ForEach(filteredCategories) { category in
                     Button(intent: SelectCategoryIntent(categoryRaw: category.rawValue)) {
-                        VStack(spacing: 4) {
+                        VStack(spacing: 6) {
                             ZStack {
                                 Circle()
                                     .fill(category.color.opacity(0.3))
-                                    .frame(width: 32, height: 32)
+                                    .frame(width: 40, height: 40)
                                 Image(systemName: category.icon)
-                                    .font(.system(size: 14))
+                                    .font(.system(size: 18))
                                     .foregroundStyle(category.iconColor)
                             }
                             Text(category.rawValue)
-                                .font(.system(size: 9))
+                                .font(.system(size: 12))
                                 .lineLimit(1)
                         }
                     }
@@ -63,6 +62,6 @@ struct CategoryListWidgetView: View {
 
             Spacer()
         }
-        .padding(8)
+        .padding(12)
     }
 }

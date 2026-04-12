@@ -13,120 +13,146 @@ struct MainWidgetView: View {
     let entry: MonnyEntry
 
     var body: some View {
-        VStack(spacing: 6) {
-            // MARK: - Segmented Control 
-            HStack(spacing: 8) {
+        VStack(spacing: 10) {
+            // MARK: - Segmented Control
+            HStack(spacing: 0) {
                 Button(intent: SetTypeIntent(typeRaw: "Expense")) {
                     Text("Expense")
-                        .font(.caption)
+                        .font(.subheadline)
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 6)
+                        .padding(.vertical, 10)
                         .background(entry.type == .expense ? Color.red.opacity(0.2) : Color.clear)
                         .foregroundStyle(entry.type == .expense ? Color.red : Color.secondary)
-                        .clipShape(Capsule())
                 }
                 .buttonStyle(.plain)
 
                 Button(intent: SetTypeIntent(typeRaw: "Income")) {
                     Text("Income")
-                        .font(.caption)
+                        .font(.subheadline)
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 6)
+                        .padding(.vertical, 10)
                         .background(entry.type == .income ? Color.green.opacity(0.2) : Color.clear)
                         .foregroundStyle(entry.type == .income ? Color.green : Color.secondary)
-                        .clipShape(Capsule())
                 }
                 .buttonStyle(.plain)
             }
-            .padding(.horizontal, 4)
+            .clipShape(Capsule())
+            .overlay(Capsule().stroke(Color.secondary.opacity(0.3), lineWidth: 1))
 
             // MARK: - Category Row
-            HStack(spacing: 8) {
+            HStack {
                 ForEach(entry.topCategories) { category in
                     Button(intent: SelectCategoryIntent(categoryRaw: category.rawValue)) {
-                        VStack(spacing: 2) {
+                        VStack(spacing: 4) {
                             ZStack {
                                 Circle()
                                     .fill(category.color.opacity(0.3))
-                                    .frame(width: 28, height: 28)
+                                    .frame(width: 44, height: 44)
                                 Image(systemName: category.icon)
-                                    .font(.system(size: 12))
+                                    .font(.system(size: 20))
                                     .foregroundStyle(category.iconColor)
                             }
                             Text(category.rawValue)
-                                .font(.system(size: 8))
+                                .font(.caption2)
                                 .lineLimit(1)
                         }
+                        .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.plain)
                     .overlay(
                         entry.selectedCategory == category
-                            ? RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.accentColor, lineWidth: 1.5)
+                            ? RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.accentColor, lineWidth: 2)
                             : nil
                     )
                 }
 
                 Button(intent: ShowCategoryListIntent()) {
-                    VStack(spacing: 2) {
+                    VStack(spacing: 4) {
                         ZStack {
                             Circle()
                                 .fill(Color.gray.opacity(0.2))
-                                .frame(width: 28, height: 28)
+                                .frame(width: 44, height: 44)
                             Image(systemName: "chevron.right")
-                                .font(.system(size: 12))
+                                .font(.system(size: 18))
                                 .foregroundStyle(.secondary)
                         }
-                        Text("More")
-                            .font(.system(size: 8))
+                        Text("See more")
+                            .font(.caption2)
                             .lineLimit(1)
                     }
+                    .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.plain)
             }
 
             // MARK: - Amount Display
             HStack(spacing: 4) {
+                Spacer()
                 Text("Rp")
-                    .font(.caption2)
+                    .font(.callout)
                     .foregroundStyle(.secondary)
                 Text(formattedAmount)
-                    .font(.title3)
+                    .font(.title)
                     .fontWeight(.bold)
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
             }
-            .frame(maxWidth: .infinity, alignment: .trailing)
-            .padding(.horizontal, 8)
 
             // MARK: - Calculator Grid
-            let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 4)
+            HStack(spacing: 6) {
+                // Left: 3-column digit grid
+                VStack(spacing: 6) {
+                    HStack(spacing: 6) {
+                        digitButton("7")
+                        digitButton("8")
+                        digitButton("9")
+                    }
+                    HStack(spacing: 6) {
+                        digitButton("4")
+                        digitButton("5")
+                        digitButton("6")
+                    }
+                    HStack(spacing: 6) {
+                        digitButton("1")
+                        digitButton("2")
+                        digitButton("3")
+                    }
+                    HStack(spacing: 6) {
+                        digitButton("0")
+                        digitButton("000")
+                        acButton
+                    }
+                }
 
-            LazyVGrid(columns: columns, spacing: 4) {
-                digitButton("1")
-                digitButton("2")
-                digitButton("3")
-                actionButton("delete.left", intent: BackspaceIntent())
+                // Right: 2 tall buttons
+                VStack(spacing: 6) {
+                    Button(intent: BackspaceIntent()) {
+                        Image(systemName: "delete.left")
+                            .font(.title3)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .background(Color(.systemGray4))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                    .buttonStyle(.plain)
 
-                digitButton("4")
-                digitButton("5")
-                digitButton("6")
-                actionButton("AC", intent: ClearIntent(), isText: true)
-
-                digitButton("7")
-                digitButton("8")
-                digitButton("9")
-                saveButton
-
-                digitButton("000")
-                digitButton("0")
-                digitButton(".")
-                Color.clear
+                    Button(intent: SaveTransactionIntent()) {
+                        Text("Save")
+                            .font(.body)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .background(Color.green)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                    .buttonStyle(.plain)
+                }
+                .frame(width: 70)
             }
         }
-        .padding(8)
+        .padding(14)
     }
 
     // MARK: - Helpers
@@ -143,43 +169,23 @@ struct MainWidgetView: View {
     private func digitButton(_ digit: String) -> some View {
         Button(intent: AppendDigitIntent(digit: digit)) {
             Text(digit)
-                .font(.caption)
+                .font(.title3)
                 .fontWeight(.medium)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: .infinity, minHeight: 44)
                 .background(Color(.systemGray5))
-                .clipShape(RoundedRectangle(cornerRadius: 6))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
         }
         .buttonStyle(.plain)
     }
 
-    private func actionButton(_ label: String, intent: some AppIntent, isText: Bool = false) -> some View {
-        Button(intent: intent) {
-            Group {
-                if isText {
-                    Text(label)
-                        .font(.caption)
-                        .fontWeight(.medium)
-                } else {
-                    Image(systemName: label)
-                        .font(.caption)
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color(.systemGray4))
-            .clipShape(RoundedRectangle(cornerRadius: 6))
-        }
-        .buttonStyle(.plain)
-    }
-
-    private var saveButton: some View {
-        Button(intent: SaveTransactionIntent()) {
-            Image(systemName: "checkmark")
-                .font(.caption)
-                .fontWeight(.bold)
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.green)
-                .clipShape(RoundedRectangle(cornerRadius: 6))
+    private var acButton: some View {
+        Button(intent: ClearIntent()) {
+            Text("AC")
+                .font(.title3)
+                .fontWeight(.medium)
+                .frame(maxWidth: .infinity, minHeight: 44)
+                .background(Color(.systemGray4))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
         }
         .buttonStyle(.plain)
     }
