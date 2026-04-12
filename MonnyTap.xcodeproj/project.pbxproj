@@ -55,6 +55,7 @@
 		060409742F8BC7EE00FD01F8 /* Exceptions for "MonnyTap" folder in "MonnyTapWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Assets.xcassets,
 				Data/Category.swift,
 				Data/SharedModelContainer.swift,
 				Data/Transaction.swift,
