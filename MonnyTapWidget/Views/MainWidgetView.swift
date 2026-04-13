@@ -108,6 +108,23 @@ struct MainWidgetView: View {
                     RoundedRectangle(cornerRadius: 10)
                         .fill((flash.type == .income ? Color.green : Color.red).opacity(0.15))
                 )
+            } else if let errorMessage = entry.errorFlash {
+                HStack(spacing: 6) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundStyle(.orange)
+                    Text(errorMessage)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                    Spacer()
+                }
+                .padding(.vertical, 4)
+                .padding(.horizontal, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.orange.opacity(0.15))
+                )
             } else {
                 HStack {
                     Text(currencySymbol)

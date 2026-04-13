@@ -16,6 +16,7 @@ struct MonnyEntry: TimelineEntry {
     let topCategories: [Category]
     let currentView: String
     let savedFlash: SavedFlash?
+    let errorFlash: String?
 }
 
 struct SavedFlash {
@@ -34,7 +35,8 @@ struct MonnyTapWidgetProvider: TimelineProvider {
             selectedCategory: nil,
             topCategories: Self.defaultCategories,
             currentView: "main",
-            savedFlash: nil
+            savedFlash: nil,
+            errorFlash: nil
         )
     }
 
@@ -46,9 +48,14 @@ struct MonnyTapWidgetProvider: TimelineProvider {
         let now = Date.now
         var entries: [MonnyEntry] = [makeEntry(at: now)]
 
-        // If a save-confirmation flash is active, schedule a follow-up entry to clear it.
-        if let flashUntil = WidgetDraftState.savedFlashUntil, flashUntil > now {
-            entries.append(makeEntry(at: flashUntil, ignoreFlash: true))
+        // Schedule follow-up entries to auto-clear any active flash.
+        let flashEnds = [WidgetDraftState.savedFlashUntil, WidgetDraftState.errorFlashUntil]
+            .compactMap { $0 }
+            .filter { $0 > now }
+            .sorted()
+
+        if let earliestEnd = flashEnds.first {
+            entries.append(makeEntry(at: earliestEnd, ignoreFlash: true))
         }
 
         completion(Timeline(entries: entries, policy: .never))
@@ -76,6 +83,15 @@ struct MonnyTapWidgetProvider: TimelineProvider {
             return SavedFlash(amount: amount, type: flashType)
         }()
 
+        let errorFlash: String? = {
+            guard !ignoreFlash,
+                  savedFlash == nil,
+                  let until = WidgetDraftState.errorFlashUntil, until > date,
+                  let message = WidgetDraftState.errorFlashMessage
+            else { return nil }
+            return message
+        }()
+
         return MonnyEntry(
             date: date,
             type: type,
@@ -83,7 +99,8 @@ struct MonnyTapWidgetProvider: TimelineProvider {
             selectedCategory: selectedCategory,
             topCategories: Self.defaultCategories,
             currentView: currentView,
-            savedFlash: savedFlash
+            savedFlash: savedFlash,
+            errorFlash: errorFlash
         )
     }
 }

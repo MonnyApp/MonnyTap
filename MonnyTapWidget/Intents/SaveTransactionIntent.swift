@@ -18,6 +18,14 @@ struct SaveTransactionIntent: AppIntent {
         let category = WidgetDraftState.selectedCategory
 
         guard let amount = Int(amountString), amount > 0 else {
+            WidgetDraftState.markError("Enter an amount first")
+            WidgetCenter.shared.reloadTimelines(ofKind: "MonnyTapWidget")
+            return .result()
+        }
+
+        if type == .expense, category == nil {
+            WidgetDraftState.markError("Pick a category")
+            WidgetCenter.shared.reloadTimelines(ofKind: "MonnyTapWidget")
             return .result()
         }
 

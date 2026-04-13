@@ -89,4 +89,29 @@ enum WidgetDraftState {
         savedFlashType = nil
         savedFlashUntil = nil
     }
+
+    // MARK: - Error flash
+
+    static var errorFlashMessage: String? {
+        get { defaults.string(forKey: "widgetErrorFlashMessage") }
+        set { defaults.set(newValue, forKey: "widgetErrorFlashMessage") }
+    }
+
+    static var errorFlashUntil: Date? {
+        get {
+            let ts = defaults.double(forKey: "widgetErrorFlashUntil")
+            return ts == 0 ? nil : Date(timeIntervalSince1970: ts)
+        }
+        set { defaults.set(newValue?.timeIntervalSince1970 ?? 0, forKey: "widgetErrorFlashUntil") }
+    }
+
+    static func markError(_ message: String, duration: TimeInterval = 2.0) {
+        errorFlashMessage = message
+        errorFlashUntil = Date().addingTimeInterval(duration)
+    }
+
+    static func clearErrorFlash() {
+        errorFlashMessage = nil
+        errorFlashUntil = nil
+    }
 }
