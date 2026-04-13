@@ -13,6 +13,9 @@ struct OverviewView: View {
     @State private var vm = OverviewViewModel()
     @State private var showAddSheet = false
 
+    // Sama persis seperti TransactionsView — fetch langsung dari SwiftData
+    @Query(sort: \Transaction.date, order: .reverse) private var transactions: [Transaction]
+
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottom) {
@@ -26,9 +29,10 @@ struct OverviewView: View {
                             Text("Analytics")
                                 .font(.title2)
                                 .fontWeight(.bold)
+                                .padding(.bottom,30)
                             AnalyticsChartView(viewModel: vm)
                                 .frame(maxWidth: .infinity)
-                                .padding(60)
+                                .padding(30)
                         }
                         .padding(.vertical, 16)
                         RecentTransactionsSection(vm: vm)
@@ -38,13 +42,9 @@ struct OverviewView: View {
                     .padding(.top, 16)
                     .background(
                         GeometryReader { geo in
-                            let minY = geo.frame(in: .global).minY
-                            let safeMinY = minY.isFinite ? minY : 0
-                            let height = max(0, safeMinY + 130)
-                            //gambar shannon disini
                             Color("bluemonny")
-                                .frame(height: height)
-                                .offset(y: -safeMinY)
+                                .frame(height: geo.frame(in: .global).minY + 130)
+                                .offset(y: -geo.frame(in: .global).minY)
                         }
                     )
                 }
@@ -58,12 +58,20 @@ struct OverviewView: View {
             .sheet(isPresented: $showAddSheet) {
                 InputTransactionsView()
             }
+            // Saat view pertama muncul, kirim data ke ViewModel
+            .onAppear {
+                vm.update(with: transactions)
+            }
+            // Setiap kali SwiftData update (transaksi baru/hapus),
+            // kirim data terbaru ke ViewModel — sama seperti pola TransactionsView
+            .onChange(of: transactions) { _, newTransactions in
+                vm.update(with: newTransactions)
+            }
         }
     }
 }
 
 // MARK: - Balance Card
-
 private struct BalanceCardSection: View {
     @Bindable var vm: OverviewViewModel
 
@@ -79,7 +87,7 @@ private struct BalanceCardSection: View {
                     .font(.subheadline)
             }
 
-            Text("\(vm.formatRupiah(vm.balance))")
+            Text(vm.formatRupiah(vm.balance))
                 .font(.title2)
                 .fontWeight(.bold)
 
@@ -117,20 +125,10 @@ private struct BalanceCardSection: View {
 }
 
 // MARK: - Recent Transactions
-
 private struct RecentTransactionsSection: View {
     @Bindable var vm: OverviewViewModel
 
     var body: some View {
-        // hapus
-        let dummy = Transaction(
-            type: .expense,
-            title: "Ayam Geprek Wani",
-            amount: 13_000,
-            date: .now,
-            category: .fnb
-        )
-
         VStack(alignment: .leading, spacing: 12) {
             NavigationLink(destination: TransactionsView()) {
                 HStack {
@@ -144,15 +142,14 @@ private struct RecentTransactionsSection: View {
             }
             .foregroundColor(.primary)
 
-            ForEach(vm.transactions.prefix(5)) { _ in
-                TransactionCard(transaction: dummy)
+            ForEach(vm.transactions.prefix(5)) { t in
+                TransactionCard(transaction: t)
             }
         }
     }
 }
 
 // MARK: - FAB Button
-
 private struct AddTransactionFAB: View {
     var onTap: () -> Void
 
@@ -176,8 +173,23 @@ private struct AddTransactionFAB: View {
 }
 
 // MARK: - Preview
+private struct OverviewViewPreview: View {
+    @Environment(\.modelContext) private var modelContext
+    @Query private var transactions: [Transaction]
+
+    var body: some View {
+        OverviewView()
+            .onAppear {
+                if transactions.isEmpty {
+                    for transaction in MockData.transactions {
+                        modelContext.insert(transaction)
+                    }
+                }
+            }
+    }
+}
 
 #Preview {
-    OverviewView()
+    OverviewViewPreview()
         .modelContainer(for: Transaction.self, inMemory: true)
 }
