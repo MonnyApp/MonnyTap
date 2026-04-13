@@ -15,6 +15,12 @@ struct MonnyEntry: TimelineEntry {
     let selectedCategory: Category?
     let topCategories: [Category]
     let currentView: String
+    let savedFlash: SavedFlash?
+}
+
+struct SavedFlash {
+    let amount: Int
+    let type: TransactionType
 }
 
 struct MonnyTapWidgetProvider: TimelineProvider {
@@ -27,21 +33,28 @@ struct MonnyTapWidgetProvider: TimelineProvider {
             amountDraft: "",
             selectedCategory: nil,
             topCategories: Self.defaultCategories,
-            currentView: "main"
+            currentView: "main",
+            savedFlash: nil
         )
     }
 
     func getSnapshot(in context: Context, completion: @escaping (MonnyEntry) -> Void) {
-        completion(makeEntry())
+        completion(makeEntry(at: .now))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<MonnyEntry>) -> Void) {
-        let entry = makeEntry()
-        let timeline = Timeline(entries: [entry], policy: .never)
-        completion(timeline)
+        let now = Date.now
+        var entries: [MonnyEntry] = [makeEntry(at: now)]
+
+        // If a save-confirmation flash is active, schedule a follow-up entry to clear it.
+        if let flashUntil = WidgetDraftState.savedFlashUntil, flashUntil > now {
+            entries.append(makeEntry(at: flashUntil, ignoreFlash: true))
+        }
+
+        completion(Timeline(entries: entries, policy: .never))
     }
 
-    private func makeEntry() -> MonnyEntry {
+    private func makeEntry(at date: Date, ignoreFlash: Bool = false) -> MonnyEntry {
         let defaults = UserDefaults(suiteName: "group.com.MonnyApp.MonnyTap")
 
         let typeRaw = defaults?.string(forKey: "widgetType") ?? "Expense"
@@ -54,13 +67,23 @@ struct MonnyTapWidgetProvider: TimelineProvider {
 
         let currentView = defaults?.string(forKey: "widgetCurrentView") ?? "main"
 
+        let savedFlash: SavedFlash? = {
+            guard !ignoreFlash,
+                  let until = WidgetDraftState.savedFlashUntil, until > date,
+                  let amount = WidgetDraftState.savedFlashAmount,
+                  let flashType = WidgetDraftState.savedFlashType
+            else { return nil }
+            return SavedFlash(amount: amount, type: flashType)
+        }()
+
         return MonnyEntry(
-            date: .now,
+            date: date,
             type: type,
             amountDraft: amountDraft,
             selectedCategory: selectedCategory,
             topCategories: Self.defaultCategories,
-            currentView: currentView
+            currentView: currentView,
+            savedFlash: savedFlash
         )
     }
 }

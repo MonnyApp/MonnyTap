@@ -34,23 +34,23 @@ struct MonnyTapWidget: Widget {
     }
 }
 
-#Preview(as: .systemLarge) {
-    MonnyTapWidget()
-} timeline: {
-    MonnyEntry(
-        date: .now,
-        type: .expense,
-        amountDraft: "50000",
-        selectedCategory: .fnb,
-        topCategories: [.fnb, .shopping, .transportation],
-        currentView: "main"
-    )
-    MonnyEntry(
-        date: .now,
-        type: .expense,
-        amountDraft: "",
-        selectedCategory: nil,
-        topCategories: [.fnb, .shopping, .transportation],
-        currentView: "categoryList"
-    )
-}
+//#Preview(as: .systemLarge) {
+//    MonnyTapWidget()
+//} timeline: {
+//    MonnyEntry(
+//        date: .now,
+//        type: .expense,
+//        amountDraft: "50000",
+//        selectedCategory: .fnb,
+//        topCategories: [.fnb, .shopping, .transportation],
+//        currentView: "main"
+//    )
+//    MonnyEntry(
+//        date: .now,
+//        type: .expense,
+//        amountDraft: "",
+//        selectedCategory: nil,
+//        topCategories: [.fnb, .shopping, .transportation],
+//        currentView: "categoryList"
+//    )
+//}

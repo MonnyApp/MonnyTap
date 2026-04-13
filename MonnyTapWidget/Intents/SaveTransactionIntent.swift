@@ -43,6 +43,7 @@ struct SaveTransactionIntent: AppIntent {
         try context.save()
 
         WidgetDraftState.resetAll()
+        WidgetDraftState.markSaved(amount: amount, type: type)
         WidgetCenter.shared.reloadTimelines(ofKind: "MonnyTapWidget")
         return .result()
     }

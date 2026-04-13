@@ -90,17 +90,38 @@ struct MainWidgetView: View {
             }
             }
 
-            // MARK: - Amount Display
-            HStack {
-                Text(currencySymbol)
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Text(formattedNumber)
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.5)
+            // MARK: - Amount Display / Saved Flash
+            if let flash = entry.savedFlash {
+                HStack(spacing: 6) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(flash.type == .income ? .green : .red)
+                    Text("Saved \(currencySymbol) \(formattedAmount(flash.amount))")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                    Spacer()
+                }
+                .padding(.vertical, 4)
+                .padding(.horizontal, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill((flash.type == .income ? Color.green : Color.red).opacity(0.15))
+                )
+            } else {
+                HStack {
+                    Text(currencySymbol)
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Text(formattedNumber)
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                        .contentTransition(.identity)
+                        .animation(nil, value: entry.amountDraft)
+                }
             }
 
             // MARK: - Calculator Grid
@@ -167,8 +188,11 @@ struct MainWidgetView: View {
     }
 
     private var formattedNumber: String {
-        let amount = Int(entry.amountDraft) ?? 0
-        return amount.formatted(.number.locale(Locale(identifier: "id_ID")))
+        formattedAmount(Int(entry.amountDraft) ?? 0)
+    }
+
+    private func formattedAmount(_ amount: Int) -> String {
+        amount.formatted(.number.locale(Locale(identifier: "id_ID")))
     }
 
     private func digitButton(_ digit: String) -> some View {
