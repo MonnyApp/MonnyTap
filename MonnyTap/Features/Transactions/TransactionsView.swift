@@ -66,7 +66,10 @@ struct TransactionsView: View {
     private var selectedDateBinding: Binding<Date> {
         Binding(
             get: { selectedDate },
-            set: { selectedDate = Calendar.current.startOfDay(for: $0) }
+            set: {
+                selectedDate = Calendar.current.startOfDay(for: $0)
+                isDatePickerPresented = false
+            }
         )
     }
 
@@ -134,21 +137,13 @@ struct TransactionsView: View {
                         
                 }
                 .popover(isPresented: $isDatePickerPresented, arrowEdge: .top) {
-                    VStack(spacing: 16) {
-                        DatePicker(
-                            "Select Date",
-                            selection: selectedDateBinding,
-                            displayedComponents: .date
-                        )
-                        .datePickerStyle(.graphical)
-                        .padding()
-
-                        Button("Done") {
-                            isDatePickerPresented = false
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .padding(.bottom)
-                    }
+                    DatePicker(
+                        "Select Date",
+                        selection: selectedDateBinding,
+                        displayedComponents: .date
+                    )
+                    .datePickerStyle(.graphical)
+                    .padding()
                     .frame(width: 340)
                     .presentationCompactAdaptation(.popover)
                 }

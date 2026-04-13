@@ -50,3 +50,5 @@ fastlane/test_output/
 # --------------------------------------------------
 *.swp
 *.lock
+
+WIDGET_PLAN.md

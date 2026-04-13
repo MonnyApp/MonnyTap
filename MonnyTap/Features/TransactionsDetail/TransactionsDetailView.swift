@@ -68,7 +68,7 @@ struct TransactionsDetailView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Are you sure you want to delete \"\(transaction.title)\" Transactions?.")
+            Text("Are you sure you want to delete this transactions?.")
         }
         .sheet(isPresented: $showEditSheet) {
             EditTransactionSheet(transaction: transaction)

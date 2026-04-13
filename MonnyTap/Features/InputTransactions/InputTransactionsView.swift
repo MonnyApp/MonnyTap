@@ -22,7 +22,18 @@ struct InputTransactionsView: View {
     @State private var title: String = ""
     
     @FocusState private var isAmountFocused: Bool
-    
+
+    @State private var showAmountAlert: Bool = false
+
+    private var amountInt: Int {
+        Int(amount) ?? 0
+    }
+
+    private var isAmountValid: Bool {
+        amountInt > 0
+    }
+
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -51,6 +62,13 @@ struct InputTransactionsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 navigationToolbar
+            }
+            .alert("Enter an amount", isPresented: $showAmountAlert) {
+                Button("OK", role: .cancel) {
+                    isAmountFocused = true
+                }
+            } message: {
+                Text("Amount must be greater than Rp 0 before you can save this transaction.")
             }
         }
         .onAppear {
@@ -81,7 +99,7 @@ struct InputTransactionsView: View {
                     .font(.system(size: 14, weight: .bold))
                     .foregroundColor(.white)
                     .frame(width: 30, height: 30)
-                    .background(Color("blueactionbutton"))
+                    .background(Color("blueactionbutton").opacity(isAmountValid ? 1 : 0.4))
                     .clipShape(Circle())
             }
         }
@@ -90,8 +108,11 @@ struct InputTransactionsView: View {
     // MARK: - Functions
     
     private func saveTransaction() {
-        let amountInt = Int(amount) ?? 0
-        
+        guard isAmountValid else {
+            showAmountAlert = true
+            return
+        }
+
         var finalCategory: Category
         if transactionType == .income {
             print("DEBUG: Masuk ke blok INCOME") // <--- Tambahkan ini
