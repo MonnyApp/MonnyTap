@@ -10,6 +10,11 @@ import SwiftUI
 struct AllTransactionCard: View {
     let transaction: Transaction
 
+    private var displayTitle: String {
+        let trimmed = transaction.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? transaction.type.rawValue : trimmed
+    }
+
     private var displayCategory: Category {
         if transaction.type == .income {
             return .income
@@ -40,7 +45,7 @@ struct AllTransactionCard: View {
 
                 // 2. Judul & Nominal
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(transaction.title)
+                    Text(displayTitle)
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(.primary)
                         .lineLimit(1)

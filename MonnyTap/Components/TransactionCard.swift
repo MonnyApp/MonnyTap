@@ -11,6 +11,11 @@ import SwiftData
 struct TransactionCard: View {
     let transaction: Transaction
 
+    private var displayTitle: String {
+        let trimmed = transaction.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? transaction.type.rawValue : trimmed
+    }
+
     var body: some View {
         NavigationLink(destination: TransactionsDetailView(transaction: transaction)) {
             HStack(alignment: .center, spacing: 16) {
@@ -38,7 +43,7 @@ struct TransactionCard: View {
 
                 // Judul + nominal (rata kanan)
                 VStack(alignment: .trailing, spacing: 4) {
-                    Text(transaction.title)
+                    Text(displayTitle)
                         .font(.subheadline)
                         .foregroundColor(.primary)
                         .multilineTextAlignment(.trailing)
