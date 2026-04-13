@@ -13,28 +13,33 @@ class OverviewViewModel {
 
     // MARK: - Data
     var chartData: [ChartDataPoint] = []
-    var transactions: [Transaction] = MockData.transactions
+    var transactions: [Transaction] = []
 
-    var balance: Int    { MockData.balance }
-    var income:  Int    { MockData.income  }
-    var expense: Int    { MockData.expense }
-    var month:   String { MockData.month   }
-
-    // MARK: - Init
-    // loadChartData dipanggil otomatis begitu ViewModel dibuat
-    init() {
-        loadChartData(from: MockData.transactions)
+    // Kalkulasi otomatis dari transactions
+    var balance: Int {
+        let totalIncome  = transactions.filter { $0.type == .income  }.reduce(0) { $0 + $1.amount }
+        let totalExpense = transactions.filter { $0.type == .expense }.reduce(0) { $0 + $1.amount }
+        return totalIncome - totalExpense
     }
 
-    // MARK: - Aksi
+    var income: Int {
+        transactions.filter { $0.type == .income }.reduce(0) { $0 + $1.amount }
+    }
 
-    func addTransaction(_ t: Transaction) {
-        transactions.insert(t, at: 0)
-        loadChartData(from: transactions) // chart ikut update saat ada transaksi baru
+    var expense: Int {
+        transactions.filter { $0.type == .expense }.reduce(0) { $0 + $1.amount }
+    }
+
+    var month: String = "August, 2026"
+
+    // MARK: - Update dari View
+    // Dipanggil dari OverviewView setiap kali @Query dapat data baru
+    func update(with transactions: [Transaction]) {
+        self.transactions = transactions
+        loadChartData(from: transactions)
     }
 
     // MARK: - Chart Logic
-
     func loadChartData(from transactions: [Transaction]) {
         let expenses = transactions.filter { $0.type == .expense && $0.category != nil }
 
@@ -70,7 +75,6 @@ class OverviewViewModel {
     }
 
     // MARK: - Format Rupiah
-
     func formatRupiah(_ amount: Int) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle           = .decimal
