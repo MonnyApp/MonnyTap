@@ -15,6 +15,12 @@ struct OverviewView: View {
 
     // Sama persis seperti TransactionsView — fetch langsung dari SwiftData
     @Query(sort: \Transaction.date, order: .reverse) private var transactions: [Transaction]
+    
+    init() {
+            UINavigationBar.appearance().largeTitleTextAttributes = [
+                .foregroundColor: UIColor.white
+            ]
+        }
 
     var body: some View {
         NavigationStack {
@@ -42,8 +48,14 @@ struct OverviewView: View {
                     .padding(.top, 16)
                     .background(
                         GeometryReader { geo in
-                            Color("bluemonny")
-                                .frame(height: geo.frame(in: .global).minY + 130)
+                            Image("Image")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(
+                                    width: geo.size.width,
+                                    height: max(0, geo.frame(in: .global).minY + 130)
+                                )
+                                .clipped()
                                 .offset(y: -geo.frame(in: .global).minY)
                         }
                     )
