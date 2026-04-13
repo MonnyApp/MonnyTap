@@ -127,8 +127,6 @@ struct TransactionsDetailView: View {
                             } else {
                                 transaction.category = editCategory ?? .other
                             }
-                            transaction.type = editType
-                            transaction.amount = Int(editAmount) ?? transaction.amount
                             transaction.date = editDate
                             transaction.title = editTitle
                             showEditSheet = false

@@ -16,18 +16,18 @@ enum CardMode {
 struct InputTransactionCard: View {
     // MARK: - Mode
     var mode: CardMode = .input
-
+    
     // MARK: - Bindings (Connected to Parent View)
     @Binding var transactionType: TransactionType
     @Binding var amount: String
     @Binding var selectedCategory: Category?
     @Binding var date: Date
     @Binding var title: String
-
+    
     private var isEditable: Bool { mode != .detail }
     
     var isAmountFocused: FocusState<Bool>.Binding
-
+    
     var body: some View {
         // 1. Segmented control sekarang ada di dalam komponen Card
         transactionTypePickerView
@@ -36,11 +36,11 @@ struct InputTransactionCard: View {
             
             
             amountInputView
-
+            
             if transactionType == .expense {
                 categoryRowView
             }
-
+            
             dateRowView
             nameRowView
         }
@@ -58,7 +58,7 @@ struct InputTransactionCard: View {
             // sehingga Segmented Control akan otomatis menyesuaikan dengan data aslinya!
         }
     }
-
+    
     // MARK: - Subviews
     
     @ViewBuilder
@@ -71,10 +71,10 @@ struct InputTransactionCard: View {
             .pickerStyle(.segmented)
             .padding(.bottom, 8)
         } else {
-           
+            
         }
     }
-
+    
     private var amountInputView: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .top) {
@@ -82,12 +82,19 @@ struct InputTransactionCard: View {
                     .font(.title3)
                     .fontWeight(.semibold)
                     .padding(.top, 8)
-
+                
                 if isEditable {
-                    TextField("0", text: $amount)
-                        .font(.system(size: 40, weight: .bold))
-                        .keyboardType(.numberPad)
-                        .focused(isAmountFocused)
+                    if mode == .input {
+                        TextField("0", text: $amount)
+                            .font(.system(size: 40, weight: .bold))
+                            .keyboardType(.numberPad)
+                            .focused(isAmountFocused)
+                    } else if mode == .edit {
+                        TextField("0", text: $amount)
+                            .font(.system(size: 40, weight: .bold))
+                            .keyboardType(.numberPad)
+                    }
+                    
                 } else {
                     Text(amount)
                         .font(.system(size: 40, weight: .bold))
@@ -99,7 +106,7 @@ struct InputTransactionCard: View {
         .background(Color(UIColor.secondarySystemGroupedBackground))
         .cornerRadius(16)
     }
-
+    
     @ViewBuilder
     private var categoryRowView: some View {
         if isEditable {
@@ -128,27 +135,27 @@ struct InputTransactionCard: View {
             .cornerRadius(16)
         }
     }
-
+    
     private var categoryIconAndLabel: some View {
         HStack {
             ZStack {
                 Circle()
                     .fill(selectedCategory?.color ?? Color.gray.opacity(0.5))
                     .frame(width: 32, height: 32)
-
+                
                 if let category = selectedCategory {
                     Image(systemName: category.icon)
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(category.iconColor)
                 }
             }
-
+            
             Text(selectedCategory?.rawValue ?? "Category")
                 .font(.body)
                 .foregroundColor(.primary)
         }
     }
-
+    
     private var dateRowView: some View {
         HStack {
             Text("Date")
@@ -167,13 +174,13 @@ struct InputTransactionCard: View {
         .background(Color(UIColor.secondarySystemGroupedBackground))
         .cornerRadius(16)
     }
-
+    
     private var nameRowView: some View {
         HStack {
             Text("Name")
                 .font(.body)
                 .frame(width: 60, alignment: .leading)
-
+            
             if isEditable {
                 TextField("", text: $title)
                     .font(.body)
@@ -194,7 +201,7 @@ struct InputTransactionCard: View {
 #Preview {
     struct PreviewWrapper: View {
         @FocusState private var isAmountFocused: Bool
-
+        
         var body: some View {
             ZStack {
                 Color(.systemGroupedBackground).ignoresSafeArea()

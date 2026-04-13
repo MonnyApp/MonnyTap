@@ -94,14 +94,10 @@ struct InputTransactionsView: View {
         
         var finalCategory: Category
         if transactionType == .income {
-            print("DEBUG: Masuk ke blok INCOME") // <--- Tambahkan ini
             finalCategory = .income
         } else {
-            print("DEBUG: Masuk ke blok ELSE (Expense)") // <--- Tambahkan ini
             finalCategory = selectedCategory ?? .other
         }
-        
-        print("DEBUG: Kategori final yang disimpan adalah: \(finalCategory)")
         let newTransaction = Transaction(
             type: transactionType,
             title: title,
